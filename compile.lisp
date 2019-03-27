@@ -5,6 +5,7 @@
 
 
 (require :asdf)
+(asdf:disable-output-translations)
 (push #P"./" asdf:*central-registry*)
 (require :kenzo)
 (asdf:make-build :kenzo :type :fasl :monolithic t :move-here #P".")
