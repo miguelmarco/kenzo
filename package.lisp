@@ -4,6 +4,10 @@
   (:use #:cl)
   (:export #:KENZO-VERSION
 
+           ;; sage-interface.lisp
+
+           #:ITOA
+
            ;; kenzo.lisp
 
            #:*BC*
@@ -599,5 +603,134 @@
            #:Z-WHITEHEAD-SINTR
            #:Z2-WHITEHEAD
            #:Z2-WHITEHEAD-SINTR
+
+           ;; anromero
+
+
+           ;; cylinders.lisp
+
+           #:DISPATCH-CYLN-CMBN
+           #:CYLN-CMBN-CMBNA1
+           #:CYLN-CMBN-CMBNB
+           #:CYLN-CMBN-CMBNA2
+           #:MAKE-CYLN-CMBN
+           #:CYLNX-CMPR
+           #:CYLINDER-CMPR
+           #:CYLINDER-BASIS
+           #:CYLINDER-INTR-DFFR
+           #:CYLINDER
+           #:CYLINDER-RRDCT
+           #:CYLINDER-LRDCT
+
+           #:CYLNX
+           #:ICYLN
+           #:CYLNA1
+           #:CYLNB
+           #:CYLNA2
+           #:WITH-CYLN
+
+
+           ;; resolutions.lisp
+
+           #:ZGGNRT-P
+           #:ZGTERM-P
+           #:IZGCMBN-P
+           #:ZGCMBN-P
+           #:GROUP
+           #:AB-GROUP
+           #:GROUP-MRPH
+           #:ZGCC
+           #:ZGMRPH
+           #:BUILD-GROUP
+           #:BUILD-GRMR
+           #:ZGGNRT-CMPR
+           #:ZGCHCM-BASIS
+           #:ZGMRPH-GNRT-GNRT
+           #:ZGMRPH-GNRT-ZGGNRT
+           #:ZGMRPH-GNRT-ZGCMBN
+           #:ZGMRPH-ZGGNRT-ZGGNRT
+           #:ZGMRPH-ZGGNRT-ZGCMBN
+           #:ZGMRPH-GNRT-?
+           #:ZGMRPH-ZGGNRT-?
+           #:ZGMRPH-ZGCMBN-?
+           #:IZGMRPH-IMRPH
+           #:INTR-ZGCHCM-MRPH
+           #:BUILD-ZGCHCM
+           #:BUILD-ZGMRPH
+           #:ZGCMBN-TWI
+           #:ZGMRPH-TWI-INTR
+           #:ZGMRPH-TWI
+           #:CHCM-TWI
+           #:CYCLICGROUP
+           #:Z-GROUP
+           #:CYCLICGROUP-ZGCHCM
+           #:CYCLICGROUP-RSLTN
+           #:BAR-ZGCMPR
+           #:BAR-ZGBASIS
+           #:BAR-BNDR-I
+           #:BAR-BNDR-INTR
+           #:BAR-ZGCHCM
+           #:BAR-CNTRHMTP-INTR
+           #:BAR-F-INTR
+           #:BAR-G-INTR
+           #:BAR-RSLTN
+           #:K-G-1-CMPR
+           #:K-G-1-BASIS
+           #:K-G-1-FACE
+           #:G-ABSM-BAR
+           #:G-BAR-ABSM
+           #:K-G-1-GRML
+           #:K-G-1-GRIN
+           #:K-G-0-BASIS
+           #:K-G-0-FACE
+           #:K-G-0-GRML
+           #:K-G-0-GRIN
+           #:K-ZP-1
+           #:K-ZP
+           #:UNIV-FBRT-INTR
+           #:UNIV-FBRT-TW
+           #:RSLTN-ZGCHCM
+           #:RSLTN-CNTRHMTP
+           #:2RSLTN-ZGMRPH-INTR
+           #:2RSLTN-ZGMRPH
+           #:2RSLTN-HMTPOP-INTR
+           #:2RSLTN-HMTPOP
+           #:K-CM-N
+
+           #:ZGGNRT
+           #:ZGGNRT1
+           #:ZGGNRT2
+           #:WITH-ZGGNRT
+           #:ZGTERM
+           #:WITH-ZGTERM
+           #:BUILD-AB-GROUP
+
+
+
+           ;; homotopy.lisp
+
+           #:CHCM-HOMOLOGY-FORMAT
+           #:HOMOLOGY-FORMAT
+           #:FIRST-NON-NULL-HOMOLOGY-GROUP-AUX
+           #:FIRST-NON-NULL-HOMOLOGY-GROUP
+           #:COMPUTE-HOMOTOPY-Z-XSLT
+           #:COMPUTE-HOMOTOPY-Z2-XSLT
+           #:COMPUTE-HOMOTOPY-ZP-XSLT
+           #:SPLIT-COMPONENTS
+           #:CONSTRUCT-SPACE-ITERATIVE
+           #:COMPUTE-HOMOTOPY-SEVERAL-XSLT
+           #:COMPUTE-HOMOTOPY2-XSLT
+           #:COMPUTE-HOMOTOPY
+           #:HOMOTOPY
+           #:HOMOTOPY-LIST
+
+           ;; fundamental-classes.lisp
+
+           #:ZP-FUNDAMENTAL-GMSM
+           #:ZP-COCYCLE-GBAR
+           #:ZP-COCYCLE-GBAR-HEAD
+           #:ZP-WHITEHEAD-SINTR
+           #:ZP-WHITEHEAD
+
 
            ))
