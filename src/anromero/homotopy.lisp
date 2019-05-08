@@ -57,7 +57,7 @@
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) result
+      (if (string= "NIL" result) nil
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -74,7 +74,7 @@
          (result (homology-format (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) result
+      (if (string= "NIL" result) nil
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -91,7 +91,7 @@
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) result
+      (if (string= "NIL" result) nil
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -103,7 +103,7 @@
 
 (DEFUN SPLIT-COMPONENTS (string)
   (let ((term (if (string= string "") "" 
-                (if (string= string "NIL") NIL
+                (if (string= string "NIL") nil
                 (subseq string 0 2)))))
     (if (string= term "Z ")
         (cons 1 (split-components (subseq string 2)))
@@ -136,7 +136,7 @@
          (result (homology-format ft (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) result
+      (if (string= "NIL" result) nil
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)

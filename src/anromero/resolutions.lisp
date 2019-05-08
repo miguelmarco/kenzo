@@ -426,7 +426,8 @@
    (type cmprf grcmpr zgcmpr)
    (type function grmult)
    (type intr-zgmrph intr)
-   (type zgcmbn zgcmbn))
+   ;;(type zgcmbn zgcmbn)
+)
   (the cmbn
     (with-cmbn (degr list) zgcmbn
       (if list
@@ -456,7 +457,8 @@
   (declare
    (type intr-zgmrph intr)
    (type cmprf grcmpr zgcmpr)
-   (type zgcmbn zgcmbn))
+   ;;(type zgcmbn zgcmbn)
+)
 
   (the cmbn
     (with-cmbn (degr list) zgcmbn
@@ -533,7 +535,8 @@
 (DEFUN ZGMRPH-ZGCMBN-? (ZGmrph zgcmbn)
   (declare
    (type zg-morphism zgmrph)
-   (type zgcmbn zgcmbn))
+   ;;(type zgcmbn zgcmbn)
+)
   (the cmbn
     (with-slots (trgt zgintr zgstrt ) zgmrph
       (declare
@@ -648,7 +651,7 @@
 
 
 (DEFUN ZGCMBN-TWI (zgcmpr zgcmbn)
-  (declare (type zgcmbn zgcmbn))
+  ;;(declare (type zgcmbn zgcmbn))
   (with-cmbn (degr list) zgcmbn
     (if list
         (let* ((cmbn-list +empty-list+))
