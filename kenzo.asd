@@ -17,7 +17,8 @@
   ((:file "package")
    (:module "src"
             :components
-            ((:file "kenzo")
+            (
+	     (:file "kenzo")
              (:file "abbreviations")
              (:file "macros")
              (:file "various")
@@ -55,17 +56,17 @@
              (:file "cs-twisted-products")
              (:file "cl-space-efhm")
              (:file "whitehead")
-             (:file "smith")
-             (:file "sage-interface")
-
+             (:file "smith")             
              (:module "anromero"
              :components
+	     ((:file "resolutions")
+	     (:file "cylinders")
+             (:file "fundamental-classes")
+             (:file "homotopy")
+		(:file "bicomplexes")))
+		#|
              ((:file "bicomplexes")
              (:file "filtered-complexes")
-             (:file "spectral-sequences")
-             (:file "resolutions")
-             (:file "cylinders")
-             (:file "fundamental-classes")
-             (:file "homotopy")))
-
-             ))))
+             (:file "spectral-sequences")))
+             |#
+            ))))

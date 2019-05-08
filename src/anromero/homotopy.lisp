@@ -6,6 +6,7 @@
 
 ;;; Authors: Jonathan Heras and Ana Romero
 
+
 (IN-PACKAGE #:cat)
 
 (provide "homotopy")
@@ -19,7 +20,7 @@
     (dolist (item rsl)
       (declare (type list item))
       (setf str (concatenate 'string str (format nil "Z")))
-      (unless (zerop (first item))
+      (unless (zerop (first item)) 
         (setf str (concatenate 'string str (format nil "/~DZ" (first item)))))
       (setf str (concatenate 'string str " ")))
     str))
@@ -43,8 +44,8 @@
       (if hf
           (1- n)
         (first-non-null-homology-group-aux chcm (1+ n) limit)))))
-
-
+  
+  
 (DEFUN FIRST-NON-NULL-HOMOLOGY-GROUP (chcm  limit)
   (first-non-null-homology-group-aux chcm 1 limit))
 
@@ -55,14 +56,15 @@
          (ft (fibration-total (eval fib)))
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
-            (homology-format (eval ft) n-hom)
+        (homology-format (eval ft) n-hom)
+      (if (string= "NIL" result) result
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
                 (compute-homotopy-z2-xslt n-hom ft (1+ indx))
               (if (and (string= (subseq result 0 2) "Z/") (string= (subseq result (search "Z" result :start2 2)) "Z"))
                 (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-              (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))
+              (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
 
 
 (DEFUN COMPUTE-HOMOTOPY-Z2-XSLT (n-hom obj indx)
@@ -71,14 +73,15 @@
          (ft (fibration-total (eval fib)))
          (result (homology-format (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
-            (homology-format (eval ft) n-hom)
+        (homology-format (eval ft) n-hom)
+      (if (string= "NIL" result) result
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
                 (compute-homotopy-z2-xslt n-hom ft (1+ indx))
               (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))
                 (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-              (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))
+              (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
 
 
 (DEFUN COMPUTE-HOMOTOPY-ZP-XSLT (n-hom obj indx n)
@@ -87,18 +90,21 @@
          (ft (fibration-total (eval fib)))
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
-            (homology-format (eval ft) n-hom)
+        (homology-format (eval ft) n-hom)
+      (if (string= "NIL" result) result
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
                 (compute-homotopy-z2-xslt n-hom ft (1+ indx))
               (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))
                   (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-                (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))
+                (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
 
 
 (DEFUN SPLIT-COMPONENTS (string)
-  (let ((term (if (string= string "") "" (subseq string 0 2))))
+  (let ((term (if (string= string "") "" 
+                (if (string= string "NIL") NIL
+                (subseq string 0 2)))))
     (if (string= term "Z ")
         (cons 1 (split-components (subseq string 2)))
       (if (string= term "Z/")
@@ -122,21 +128,22 @@
                     (fib (zp-whitehead (car list) chcm ch))
                     (ft (fibration-total fib)))
                (construct-space-iterative ft (cdr list) indx)))
-          )))
+          )))   
 
 
 (DEFUN COMPUTE-HOMOTOPY-SEVERAL-XSLT (n-hom obj indx hom)
   (let* ((ft (construct-space-iterative obj (split-components hom) indx))
          (result (homology-format ft (1+ indx))))
     (if (= (1+ indx) n-hom)
-            (homology-format (eval ft) n-hom)
+        (homology-format (eval ft) n-hom)
+      (if (string= "NIL" result) result
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
                 (compute-homotopy-z2-xslt n-hom ft (1+ indx))
               (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))
                   (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-                (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))
+                (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
 
 
 (DEFUN COMPUTE-HOMOTOPY2-XSLT (n-hom obj degree hom)
@@ -154,7 +161,7 @@
     (compute-homotopy-z2-xslt n-hom obj (1+ degree)))
    ((and (string= (subseq hom 0 2) "Z/") (string= (subseq hom (search "Z" hom :start2 2)) "Z"))
     (compute-homotopy-zp-xslt n-hom obj (1+ degree) (read-from-string (subseq hom 2 (search "Z" hom :start2 2)))))
-   (t
+   (t 
     (compute-homotopy-several-xslt n-hom obj (1+ degree) hom))))
 
 
@@ -168,15 +175,15 @@
   (let (;; we obtain the first non null homology group
         (first-non-null (first-non-null-homology-group smst degr)))
     (if first-non-null
-        (progn
+        (progn 
           (let ((result (split-components (compute-homotopy smst degr first-non-null))))
-            (format t "~3%Homotopy in dimension ~D :~%" degr)
+            (format t "~3%Homotopy in dimension ~D :~%" degr) 
             (dolist (item result)
               (format t "~2%Component Z")
-              (unless (equal item 1)
+              (unless (equal item 1) 
                 (format t "/~DZ" item)))
             (terpri) (terpri)))
-      (progn
+      (progn 
           (format t "~3%Homotopy in dimension ~D :~2%" degr)
         (terpri) (terpri)))))
 
@@ -188,6 +195,7 @@
         (split-components (compute-homotopy smst degr first-non-null))
       nil)))
 
-
+      
+    
 
 
