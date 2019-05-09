@@ -8,9 +8,16 @@
 
 
 
+;;;; Chain complexes
+
+
+
 (DEFVAR *ASCII-NUM-START* 48)
 
+
+
 (DEFVAR *ASCII-NUM-END* 57)
+
 
 
 (DEFUN ITOA (value)
@@ -35,6 +42,7 @@
 
 
 (DEFUN STRCAT (&rest strings) (apply 'concatenate 'string strings))
+
 
 
 (DEFMACRO GEN (num1 num2)
@@ -146,6 +154,39 @@
 
 
 
+(DEFUN MAKE-ARRAY-TO-LISTS (array)
+  (loop for i below (array-dimension array 0)
+        collect (loop for j below (array-dimension array 1)
+                      collect (aref array i j))))
+
+
+
+(DEFUN MAKE-ARRAY-FROM-LISTS (nrows ncols list)
+    (make-array (list nrows ncols) :initial-contents list))
+
+
+
+(DEFUN BASIS_AUX1 (kchcm dim)
+    (basis kchcm dim))
+
+
+
+(DEFUN ORGN_AUX1 (kchcm)
+    (orgn kchcm))
+
+
+
+(DEFUN DFFR_AUX1(kchcm dim cmbn_list)
+    (let ((comb (cmbn dim)))
+        (setf (cmbn-list comb) cmbn_list)
+        (dffr kchcm comb)))
+
+
+
+;;;; Simplicial sets
+
+
+
 (DEFUN BUILD-FINITE-SS2 (list)
   (declare (list list))
   (let ((bspn (first list))
@@ -166,5 +207,6 @@
       (setf (symbol-value ind-smst) rslt)
       rslt)))
 
-(DEFUN MAKE-ARRAY-FROM-LISTS (list)
-    (make-array (list (length list) (length (first list))) :initial-contents list))
+
+
+
