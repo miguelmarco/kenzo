@@ -43,7 +43,7 @@
 
 
 (DEFUN KBASIS (schcm)
-#| It provides the slot :basis of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
+#| Provide the slot :basis of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
   (flet ((rslt (dim)
            (let ((pair (assoc dim schcm)))
              (if (null pair)
@@ -54,7 +54,7 @@
 
 
 (DEFUN KDFFR (schcm)
-#| It provides the slot :intr-dffr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
+#| Provide the slot :intr-dffr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
   (flet ((frslt (dim gnr)
            (let* ((sep (1+ (position #\G (subseq (write-to-string gnr) 1))))
                   (dim_gnr (read-from-string (subseq (write-to-string gnr) 1 sep)))
@@ -77,7 +77,7 @@
 
 
 (DEFUN G-CMPR (GnGm1 GnGm2)
-#| It provides the slot :cmpr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
+#| Provide the slot :cmpr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
   (let* ((sep (1+ (position #\G (subseq (write-to-string GnGm1) 1))))
          (m1 (read-from-string (subseq (write-to-string GnGm1) (1+ sep))))
          (m2 (read-from-string (subseq (write-to-string GnGm2) (1+ sep)))))
@@ -91,7 +91,7 @@
 
 
 (DEFUN ENTRY (mat i j)
-#| It provides the entry in row 'i' and column 'j' of the matrice 'mat' |#
+#| Provide the entry in row 'i' and column 'j' of the matrice 'mat' |#
   (let ((p (left (chercher-hor (baselig mat i) j))))
     (if (= j (icol p))
         (val p)
@@ -99,7 +99,7 @@
 
 
 (DEFUN CONVERTMATRICE (matrice)
-#| It converts a matrix of type matrice to an array |#
+#| Convert a matrix of type matrice to an array |#
   (let* ((numfil (nlig matrice))
          (numcol (ncol matrice))
          (rslt (make-array (list numfil numcol) :initial-element 0)))
@@ -147,14 +147,14 @@
 
 
 (DEFUN MAKE-ARRAY-TO-LISTS (array)
-#| It converts an array to a list formed by its rows |#
+#| Convert an array to a list formed by the array's rows |#
   (loop for i below (array-dimension array 0)
         collect (loop for j below (array-dimension array 1)
                       collect (aref array i j))))
 
 
 (DEFUN MAKE-ARRAY-FROM-LISTS (nrows ncols list)
-#| It constructs an array from a list formed by its rows |#
+#| Construct an array from a list formed by the array's rows |#
     (make-array (list nrows ncols) :initial-contents list))
 
 
@@ -173,7 +173,20 @@
         (dffr kchcm comb)))
 
 
-;;;;; SImplicial Sets ;;;;;
+(DEFUN KCHAINCOMPLEX_AUX1 (chcm str_orgn)
+#| Construct a chain complex in Kenzo from the information of the assoc list 'chcm' constructed from a dictionary whose values are matrices |#
+  (build-chcm :cmpr #'G-CMPR
+  :strt :GNRT
+  :basis (kbasis chcm)
+  :intr-dffr (kdffr chcm)
+  :orgn `(KChainComplex ,str_orgn)))
+
+
+;;;;; Simplicial Sets ;;;;;
+
+
+(DEFUN KABSTRACTSIMPLEX_AUX1 (degeneracies name)
+  (absm (dgop-ext-int degeneracies) name))
 
 
 (DEFUN BUILD-FINITE-SS2 (list)
@@ -199,7 +212,7 @@
 
 
 (DEFUN SFINITESIMPLICIALSET_AUX1 (finitess limit)
-#| It constructs a list (L0 L1 ... Lm), with m <= 'limit', where each list Lk is formed by lists of the form (S (a0 ... ak)), where each aj is a face of the k-simplex S |#
+#| Construct a list (L0 L1 ... Lm), with m <= 'limit', where each list Lk is formed by lists of the form (S (a0 ... ak)), where each aj is a face of the k-simplex S |#
   (let ((rslt NIL))
     (do ((k 1 (1+ k))) ((> k limit))
       (let ((dimk NIL))
