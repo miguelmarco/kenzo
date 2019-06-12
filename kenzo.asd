@@ -56,7 +56,8 @@
              (:file "cs-twisted-products")
              (:file "cl-space-efhm")
              (:file "whitehead")
-             (:file "smith")             
+             (:file "smith")
+             (:file "sage-interface")             
              (:module "anromero"
              :components
 	     ((:file "resolutions")
