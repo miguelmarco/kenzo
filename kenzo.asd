@@ -56,17 +56,16 @@
              (:file "cs-twisted-products")
              (:file "cl-space-efhm")
              (:file "whitehead")
-             (:file "smith")             
+             (:file "smith")
+             (:file "sage-interface")             
              (:module "anromero"
              :components
 	     ((:file "resolutions")
 	     (:file "cylinders")
              (:file "fundamental-classes")
-             (:file "homotopy")
-		(:file "bicomplexes")))
-		#|
-             ((:file "bicomplexes")
+             (:file "homotopy")	     
+             (:file "bicomplexes")
              (:file "filtered-complexes")
-             (:file "spectral-sequences")))
-             |#
-            ))))
+             (:file "spectral-sequences")
+	     (:file "persistent-homology")             
+            ))))))

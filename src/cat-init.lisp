@@ -53,7 +53,16 @@
     "cs-twisted-products"
     "cl-space-efhm"
     "whitehead"
-    "smith"))
+    "smith"
+    "anromero\\resolutions"
+    "anromero\\cylinders"
+    "anromero\\fundamental-classes"
+    "anromero\\homotopy"
+    "anromero\\bicomplexes"
+    "anromero\\filtered-complexes"
+    "anromero\\spectral-sequences"
+    "anromero\\persistent-homology"
+    ))
 
 (DO ((i 1 (1+ i))
      (mark +file-list+ (cdr mark)))
@@ -61,8 +70,8 @@
   (format t "~% FILE ~2D: ~A" i (car mark)))
 
 (DEFCONSTANT +SOURCE-EXTENSION+
-  #+(or allegro lispworks) "cl"
-  #+(or clisp ccl ecl sbcl) "lisp"
+  #+(or lispworks) "cl"
+  #+(or allegro clisp ccl ecl sbcl) "lisp"
   #-(or allegro ccl clisp ecl lispworks sbcl)
   (error "Not an Allegro or CCL or CLisp or LispWorks or SBCL environment."))
 

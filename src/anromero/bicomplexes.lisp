@@ -250,7 +250,7 @@
         chcm)))
 
 #|
-(setf bc (Build-Bicm :bcbasis #'bas :dffr1 #'dif1 :dffr2 #'dif2 :cmpr 's-cmpr 
+(setf bc (Build-Bicm :bcbasis #'bas :dffr1 #'dif1 :dffr2 #'dif2 :cmpr #'s-cmpr 
           :orgn '(BC-test)))
 (dotimes (i 5)
    (print (basis bc i)))
