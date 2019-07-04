@@ -182,7 +182,7 @@
 
 #|
 (setq gnrt-list (list '(2 4 6 8) '(0 1 0 0) '(0 3 3 3)))
-(Gnrt-List-to-Mtrx gnrt-list)
+(gnrt-list-to-mtrx gnrt-list)
 |# 
 
 ;; Returns the list of columns of the matrix mtrx.
@@ -357,9 +357,7 @@
    (type filtered-chain-complex fltrcm)
    (type fixnum r p q))
   (the matrix
-    (let* ((cmpr (cmpr1 fltrcm))
-           (dffr (dffr fltrcm))
-           (degr (+ p q))
+    (let* ((degr (+ p q))
            (sbasis (fltrd-basis fltrcm degr p))
            (tbasis 
             (mapcan 
@@ -372,8 +370,6 @@
       ;; consider (<a-b> (1+ (-p r)) t(degr),
       ;; where t(degr)=max{flin(x), x \in X_degr}.
       (declare
-       (type cmprf cmpr)
-       (type morphism dffr)
        (type fixnum degr)
        (list sbasis tbasis))
       (let ((srank (length sbasis))
@@ -401,8 +397,8 @@
 (setq kz2 (k-z2-1))
 (setq fcc (bar kz2))
 (Change-Chcm-TO-Flcc fcc abar-flin `(abar-flin))
-(FLTR-CHCM-Z-MTRX fcc 2 3 2)
-(FLTR-CHCM-Z-MTRX fcc 1 2 4)
+(fltr-chcm-z-mtrx fcc 2 3 2)
+(fltr-chcm-z-mtrx fcc 1 2 4)
 |#
  
 
@@ -430,8 +426,8 @@
                 all-basis-gnrt-list
               (kernel mat))))))))
 #|
-(Fltr-Chcm-Z-Gnrt-List fcc 2 3 2)
-(Fltr-Chcm-Z-Gnrt-List fcc 1 2 4)
+(fltr-chcm-z-gnrt-list fcc 2 3 2)
+(fltr-chcm-z-gnrt-list fcc 1 2 4)
 |# 
 
 ;; Returns a list of lists with the coordinates of the elements of
@@ -814,7 +810,7 @@
 ;; on each of the components of E^r_{p-r,q+r-1} of the differential 
 ;; d: E^r_{p,q} --> E^r_{p-r,q+r-1} applied to the element of E^r_{p,q}
 ;; which has as coordinates the list int-list. (Only for finitely generated complexes)
-(DEFUN EFF-SPSQ-DFFR (fltrcm r p q int-list)
+(DEFUN EFF-SPSQ-DFFR-OF-ONE-ELEMENT (fltrcm r p q int-list)
   (declare
    (type filtered-chain-complex fltrcm)
    (type fixnum r p q)
@@ -826,11 +822,11 @@
            (tbasis (fltrd-basis fltrcm (1- degr) (- p r)))
            (num-mtrx (spsq-num-mtrx fltrcm r p q))
            (den-mtrx (spsq-den-mtrx fltrcm r p q))
-           (Z-gnrt-list (Fltr-Chcm-Z-Gnrt-List fltrcm r p q))
+           (z-gnrt-list (fltr-chcm-z-gnrt-list fltrcm r p q))
            (s-basis-dvs (mtrx-quotient (copy-mtrx num-mtrx) den-mtrx))
            (s-gnrt-list (first s-basis-dvs))
            (s-dvs (second s-basis-dvs))
-           (t-basis-dvs (eff-spsq-basis-dvs fltrcm r (- p r) (1- (+ q r))))
+           (t-basis-dvs (spsq-basis-dvs fltrcm r (- p r) (1- (+ q r))))
            (t-gnrt-list (first t-basis-dvs))
            (t-dvs (second t-basis-dvs))
            (selement (make-list (length sbasis) :initial-element 0))
@@ -905,12 +901,122 @@
           rslt)))))          
 
 #|
-(eff-spsq-dffr fcc 1 2 3 '(1))
-(eff-spsq-dffr fcc 1 2 5 '(0 1))
-(eff-spsq-dffr fcc 1 2 5 '(1 0))
-(eff-spsq-dffr fcc 1 3 4 '(1 0))
-(eff-spsq-dffr fcc 1 3 4 '(0 1))
+(eff-spsq-dffr-of-one-element fcc 1 2 3 '(1))
+(eff-spsq-dffr-of-one-element fcc 1 2 5 '(0 1))
+(eff-spsq-dffr-of-one-element fcc 1 2 5 '(1 0))
+(eff-spsq-dffr-of-one-element fcc 1 3 4 '(1 0))
+(eff-spsq-dffr-of-one-element fcc 1 3 4 '(0 1))
 |# 
+
+
+
+;; Function that returns the matrix (as a list of lists) of the differential 
+;; d: E^r_{p,q} --> E^r_{p-r,q+r-1} (Only for finitely generated complexes)
+(DEFUN EFF-SPSQ-DFFR-MTRX (fltrcm r p q )
+  (declare
+   (type filtered-chain-complex fltrcm)
+   (type fixnum r p q))
+  (the list
+    (let* ((cmpr (cmpr1 fltrcm))
+           (degr (+ p q))
+           (sbasis (fltrd-basis fltrcm degr p))
+           (tbasis (fltrd-basis fltrcm (1- degr) (- p r)))
+           (num-mtrx (spsq-num-mtrx fltrcm r p q))
+           (den-mtrx (spsq-den-mtrx fltrcm r p q))
+           (Z-gnrt-list (Fltr-Chcm-Z-Gnrt-List fltrcm r p q))
+           (s-basis-dvs (mtrx-quotient (copy-mtrx num-mtrx) den-mtrx))
+           (s-gnrt-list (first s-basis-dvs))
+           (s-dvs (second s-basis-dvs))
+           (t-basis-dvs (eff-spsq-basis-dvs fltrcm r (- p r) (1- (+ q r))))
+           (t-gnrt-list (first t-basis-dvs))
+           (t-dvs (second t-basis-dvs))
+           (s-length (length
+                      (mapcan #'(lambda (i)
+                                  (if (not (eql 1 i)) (list i) nil))
+                        s-dvs)))
+           (base-list nil))
+      (declare 
+       (type cmprf cmpr)
+       (type fixnum degr s-length)
+       (type list sbasis tbasis z-gnrt-list s-basis-dvs s-gnrt-list s-dvs
+             t-basis-dvs t-gnrt-list t-dvs)
+       (type matrix num-mtrx den-mtrx))
+      (progn
+        (dotimes (i s-length)
+          (push (nconc (make-list (1- (- s-length i)) :initial-element 0) (list 1)
+                       (make-list i :initial-element 0))
+                base-list ))        
+        (mapcar #'(lambda (int-list)
+                    (let* ((selement (make-list (length sbasis) :initial-element 0))
+                           (cmbn (cmbn degr))
+                           )
+                      (declare
+                       (type list selement)
+                       (type cmbn cmbn))
+                      (progn
+                        (labels ((2list-add (list1 list2)
+                                            (declare (type list list1 list2))
+                                            (the list
+                                              (mapcar #'+ list1 list2)))
+                                 (n-list (n list)
+                                         (declare
+                                          (type list list)
+                                          (type fixnum n))
+                                         (the list
+                                           (mapcar #'(lambda (i)
+                                                       (* n i))
+                                             list))))
+                          (do ((mark1 s-gnrt-list (cdr mark1))
+                               (mark2 s-dvs (cdr mark2))
+                               (mark3 int-list))
+                              ((endp mark1))
+                            (declare (list mark1 mark2 mark3))
+                            (if (not (eql 1 (car mark2)))
+                                (progn
+                                  (setq selement (2list-add selement (n-list (car mark3) (car mark1))))
+                                  (pop mark3)))))
+                        (let* ((selt-coord (vctr-coordinates selement num-mtrx)))
+                          (declare (list selt-coord))
+                          (do ((mark1 z-gnrt-list (cdr mark1))
+                               (mark2 selt-coord (cdr mark2)))
+                              ((endp mark1))
+                            (declare (list mark1 mark2))
+                            (if (not (eql 0 (car mark2)))
+                                (setq cmbn (2cmbn-add cmpr cmbn (n-cmbn (car mark2)
+                                                                        (funcall 
+                                                                         #'(lambda (int-list)
+                                                                             (declare (list int-list))
+                                                                             (the cmbn
+                                                                               (let* ((cmbn2 (cmbn degr)))
+                                                                                 (declare 
+                                                                                  (type cmbn cmbn))
+                                                                                 (do ((mark3 int-list (cdr mark3))
+                                                                                      (mark4 sbasis (cdr mark4)))
+                                                                                     ((or (endp mark3) (endp mark4)))
+                                                                                   (declare (type list mark3 mark4))
+                                                                                   (if (not (= 0 (car mark3)))
+                                                                                       (setq cmbn2 (2cmbn-add cmpr cmbn2 
+                                                                                                              (cmbn degr (car mark3) (car mark4))))))
+                                                                                 cmbn2)))
+                                                                         (car mark1))))))))
+                        (let* ((dffr-cmbn (dffr fltrcm cmbn))
+                               (crdnt (cmbn-coordinates dffr-cmbn t-gnrt-list tbasis cmpr))
+                               (rslt nil))
+                          (declare
+                           (type cmbn dffr-cmbn)
+                           (type list crdnt rslt))
+                          (do ((mark1 t-dvs (cdr mark1))
+                               (mark2 crdnt (cdr mark2)))
+                              ((endp mark1))
+                            (declare (list mark1 mark2))
+                            (if (not (eql 1 (car mark1)))
+                                (if (eql 0 (car mark1))
+                                    (setq rslt (nconc rslt (list (car mark2))))
+                                  (setq rslt (nconc rslt (list (mod (car mark2) (car mark1))))))))
+                          rslt))))
+          base-list)))))         
+
+
 
 ;; CONVERGENCE OF THE SPECTRAL SEQUENCE            
 
@@ -1009,7 +1115,7 @@
 ;; when the top complex is effective (we need to obtain the elements in the basis of this complex). 
 (DEFUN HMTP-EQ-FLTR-ORDER (hmtp-eq degr)
   (declare 
-   (type HOMOTOPY-EQUIVALENCE hmtp-eq)
+   (type homotopy-equivalence hmtp-eq)
    (type fixnum degr))
   (let* ((lcc (lbcc hmtp-eq))
          (tcc (tcc hmtp-eq))
@@ -1035,11 +1141,11 @@
 (setq k3 (k-z2 3))
 (Setq hmtp-eq3 (efhm k3))
 (setq ek3 (rbcc hmtp-eq3))
-(Change-Chcm-TO-Flcc ek3 :flin abar-flin :orgn `(filtered-chain-complex ,ek3))
+(change-chcm-to-flcc ek3 :flin abar-flin :orgn `(filtered-chain-complex ,ek3))
 (setf k3-flin
   #'(lambda (degr gnrt)
       (flin ek3 (rf hmtp-eq3 (lg hmtp-eq3 degr gnrt)))))
-(Change-Chcm-TO-Flcc k3 :flin k3-flin :orgn `(filtered-chain-complex ,k3))
+(change-chcm-to-flcc k3 :flin k3-flin :orgn `(filtered-chain-complex ,k3))
 (hmtp-eq-fltr-order hmtp-eq3 3)
 (hmtp-eq-fltr-order hmtp-eq3 5)
 |#
@@ -1069,9 +1175,9 @@
 ;; complex translating the filtration in the original filtered complex FltrCm, suposing that the 
 ;; homotopy in the right side is compatible with the filtration in the left complex for such r (we 
 ;; supose that flin(rh(lf(y)))-flin(lf(y))<r for every y in the top complex). 
-(DEFMETHOD SPSQ-BASIS-DVS ((FltrCm filtered-chain-complex) r p q)
+(DEFMETHOD SPSQ-BASIS-DVS ((fltrcm FILTERED-CHAIN-COMPLEX) r p q)
   (declare 
-      (type fixnum r p q))
+   (type fixnum r p q))
   (let* ((hmtp-eq (efhm fltrcm))
          (eff-chcm (rbcc hmtp-eq))
          )
@@ -1126,8 +1232,7 @@
    (type filtered-chain-complex fltrcm)
    (type fixnum r p q))
   (let* ((hmtp-eq (efhm fltrcm))
-         (eff-chcm (rbcc hmtp-eq))
-         )
+         (eff-chcm (rbcc hmtp-eq)))
     (declare
      (type homotopy-equivalence hmtp-eq)
      (type chain-complex eff-chcm)
@@ -1140,23 +1245,42 @@
 ;; Method that returns the list of integers which correspond to the coordinates
 ;; on each of the components of E^r_{p-r,q+r-1} of the differential 
 ;; d: E^r_{p,q} --> E^r_{p-r,q+r-1} applied to the element of E^r_{p,q}
-;; which has as coordinates the list int-list.
-(DEFMETHOD SPSQ-DFFR ((fltrcm FILTERED-CHAIN-COMPLEX) r p q int-list)
+;; which has as coordinates the list int-list, using the effective homology
+;; when the complex is not of finite type.
+(DEFMETHOD SPSQ-DFFR-OF-ONE-ELEMENT ((fltrcm FILTERED-CHAIN-COMPLEX) r p q int-list)
   (declare
    (type filtered-chain-complex fltrcm)
    (type fixnum p q r)
    (type list int-list))
   (let* ((hmtp-eq (efhm fltrcm))
-         (eff-chcm (rbcc hmtp-eq))
-         )
+         (eff-chcm (rbcc hmtp-eq)))
     (declare
      (type homotopy-equivalence hmtp-eq)
-     (type chain-complex eff-chcm)
-     )
+     (type chain-complex eff-chcm))
     (progn
       (if (not (typep eff-chcm 'filtered-chain-complex))
           (translate-filtration hmtp-eq))
-      (eff-spsq-dffr eff-chcm r p q int-list))))
+      (eff-spsq-dffr-of-one-element eff-chcm r p q int-list))))
+
+
+;; Function that returns the matrix (as a list of lists) of the differential 
+;; d: E^r_{p,q} --> E^r_{p-r,q+r-1}, using the effective homology
+;; when the complex is not of finite type.
+(DEFMETHOD SPSQ-DFFR-MTRX ((fltrcm FILTERED-CHAIN-COMPLEX) r p q)
+  (declare
+   (type filtered-chain-complex fltrcm)
+   (type fixnum p q r))
+  (let* ((hmtp-eq (efhm fltrcm))
+         (eff-chcm (rbcc hmtp-eq)))
+    (declare
+     (type homotopy-equivalence hmtp-eq)
+     (type chain-complex eff-chcm))
+    (progn
+      (if (not (typep eff-chcm 'filtered-chain-complex))
+          (translate-filtration hmtp-eq))
+      (eff-spsq-dffr-mtrx eff-chcm r p q))))
+
+
 
 ;; Function that determines the level r at which for degree n the E^r_{p,q} (with p+q=degr)
 ;; of the filtered complex fltrcm (with effective homology) are equal to E^\infty_{p,q} (i.e., it 
@@ -1176,9 +1300,6 @@
       (if (not (typep eff-chcm 'filtered-chain-complex))
           (translate-filtration hmtp-eq))
       (eff-spsq-cnvg eff-chcm degr))))
-
-
-
 
 
 ;; Homology filtration
@@ -1322,15 +1443,10 @@
       (eff-hmlg-fltr eff-chcm degr p))))
 
 
-
-
-;;(DEFTYPE ss-type () '(member :serre :eilenberg-moore :filtration))
-
-
 (DEFCLASS SPECTRAL-SEQUENCE ()
   (;; FiLTeRedchainCoMplex
    (fltrcm :type filtered-chain-complex :initarg :fltrcm :reader fltrcm)
-   ;; ReSuLTS
+   ;; ReSuLTS 
    (group-rslts :type list :initarg :group-rslts :reader group-rslts)
    (dffr-rslts :type list :initarg :dffr-rslts :reader dffr-rslts)
    ;; IDentification NuMber      
@@ -1358,11 +1474,12 @@
 
 (DEFUN SS (idnm)
   (declare (type fixnum idnm))
-  (the (or SPECTRAL-SEQUENCE null)
+  (the (or spectral-sequence null)
     (find idnm *ss-list* :key #'idnm)))
 
 
-(DEFUN BUILD-ss (fltrcm orgn)
+;;; Function to build a spectral sequences from a filtered chain complex and an origin
+(DEFUN BUILD-SS (fltrcm orgn)
   (declare
    (type filtered-chain-complex fltrcm)
    (type list orgn))
@@ -1373,7 +1490,7 @@
         (when already
           (return-from build-ss already)))
       (let ((ss (make-instance 'spectral-sequence
-                   :fltrcm fltrcm
+                  :fltrcm fltrcm
                   :orgn orgn
                   :group-rslts +empty-list+
                   :dffr-rslts +empty-list+)))
@@ -1382,16 +1499,17 @@
         ss))))
 
 
+;; Method that returns the representation basis-divisors of E^r_{p,q} of the spectral sequence
 (DEFMETHOD SPSQ-BASIS-DVS ((ss SPECTRAL-SEQUENCE) r p q)
   (declare
    (type fixnum r p q))
   (let* ((fltrcm (fltrcm ss))
          (rslts (group-rslts ss))
          (pos (position (list r p q nil) rslts :test #'(lambda (l1 l2)
-                                                    (and
-                                                     (eq (first l1) (first l2))
-                                                     (eq (second l1) (second l2))
-                                                     (eq (third l1) (third l2)))))))
+                                                         (and
+                                                          (eq (first l1) (first l2))
+                                                          (eq (second l1) (second l2))
+                                                          (eq (third l1) (third l2)))))))
     (the list
       (if pos (fourth (nth pos rslts))
         (let ((basis-dvs (spsq-basis-dvs fltrcm r p q)))
@@ -1401,8 +1519,23 @@
             (setf (slot-value ss 'group-rslts) rslts)
             basis-dvs))))))
 
-        
-(DEFMETHOD SPSQ-GROUP ((ss SPECTRAL-SEQUENCE) r p q)
+
+;; Method that returns the list of abelian invariants of the group E^r_{p,q} of the spectral sequence
+(DEFMETHOD SPECTRAL-SEQUENCE-GROUP ((ss SPECTRAL-SEQUENCE) r p q)
+  (declare
+   (type spectral-sequence ss)
+   (type fixnum r p q))  
+  (let* ((basis-dvs (SPSQ-BASIS-DVS SS r p q))
+         (divs (second basis-dvs)))
+    (declare (list basis-dvs divs))
+    (mapcan #'(lambda (i)
+                (if (eq 1 i) nil
+                  (list i)))
+      divs)))
+
+
+;; Method that prints the spectral sequence group
+(DEFMETHOD PRINT-SPSQ-GROUP ((ss SPECTRAL-SEQUENCE) r p q)
   (declare
    (type spectral-sequence ss)
    (type fixnum r p q))  
@@ -1425,7 +1558,7 @@
 ;; on each of the components of E^r_{p-r,q+r-1} of the differential 
 ;; d: E^r_{p,q} --> E^r_{p-r,q+r-1} applied to the element of E^r_{p,q}
 ;; which has as coordinates the list int-list.
-(DEFMETHOD SPSQ-DFFR ((ss SPECTRAL-SEQUENCE) r p q int-list)
+(DEFMETHOD SPECTRAL-SEQUENCE-DIFFERENTIAL-OF-ONE-ELEMENT ((ss SPECTRAL-SEQUENCE) r p q int-list)
   (declare
    (type spectral-sequence ss)
    (type fixnum p q r)
@@ -1433,14 +1566,14 @@
   (let* ((fltrcm (fltrcm ss))
          (rslts (dffr-rslts ss))
          (pos (position (list r p q int-list nil) rslts :test #'(lambda (l1 l2)
-                                                    (and
-                                                     (eq (first l1) (first l2))
-                                                     (eq (second l1) (second l2))
-                                                     (eq (third l1) (third l2))
-                                                     (eq (fourth l1) (fourth l2)))))))
+                                                                  (and
+                                                                   (eq (first l1) (first l2))
+                                                                   (eq (second l1) (second l2))
+                                                                   (eq (third l1) (third l2))
+                                                                   (eq (fourth l1) (fourth l2)))))))
     (the list
       (if pos (fifth (nth pos rslts))
-        (let ((l (spsq-dffr fltrcm r p q int-list)))
+        (let ((l (spsq-dffr-of-one-element fltrcm r p q int-list)))
           (declare (type list l))
           (progn
             (push (list r p q int-list l) rslts)
@@ -1448,7 +1581,34 @@
             l))))))
 
 
-(DEFUN SERRE-SS (f)
+;; Function that returns the matrix (as a list of lists) of the differential 
+;; d: E^r_{p,q} --> E^r_{p-r,q+r-1}, using the effective homology
+;; when the complex is not of finite type.
+(DEFMETHOD SPECTRAL-SEQUENCE-DIFFERENTIAL-MATRIX ((ss SPECTRAL-SEQUENCE) r p q)
+  (declare
+   (type spectral-sequence ss)
+   (type fixnum p q r))   
+  (let* ((fltrcm (fltrcm ss))
+         (rslts (dffr-rslts ss))
+         (pos (position (list r p q nil) rslts :test #'(lambda (l1 l2)
+                                                         (and
+                                                          (eq (first l1) (first l2))
+                                                          (eq (second l1) (second l2))
+                                                          (eq (third l1) (third l2))
+                                                          )))))
+    (the list
+      (if pos (fourth (nth pos rslts))
+        (let ((l (spsq-dffr-mtrx fltrcm r p q )))
+          (declare (type list l))
+          (progn
+            (push (list r p q l) rslts)
+            (setf (slot-value ss 'dffr-rslts) rslts)
+            l))))))
+
+
+;; Funcion that constructs the Serre spectral sequence associated with a fibration f
+;; Returns an object of the class Spectral-sequence
+(DEFUN SERRE-SPECTRAL-SEQUENCE (f)
   (declare (type fibration f))
   (let* ((fltrcm (fibration-total f))
          (ecc (rbcc (efhm fltrcm))))
@@ -1458,7 +1618,10 @@
       (build-ss fltrcm   `(Serre-Spectral-Sequence ,f)))))
 
 
-(DEFUN EILENBERG-MOORE-SS (x)
+;; Funcion that constructs the Eilenberg-Moore spectral sequence associated with a (1-reduced)
+;; simplicial set X
+;; Returns an object of the class Spectral-sequence
+(DEFUN EILENBERG-MOORE-SPECTRAL-SEQUENCE (x)
   (declare (type simplicial-set x))
   (let* ((ox (loop-space x))
          (ecc (rbcc (efhm OX))))
@@ -1475,29 +1638,45 @@
   (setf F3 (z-whitehead s3 k3)))
 
 
-(setf sss (serre-ss f3))
+(setf ss1 (serre-spectral-sequence f3))
 
 
 (setf r 2)
 
-  (dotimes (n 8)
-    (dotimes (p (1+ n))
-      (let ((q (- n p)))
-        (spsq-group sss r p q))))
+(dotimes (n 8)
+  (dotimes (p (1+ n))
+    (let ((q (- n p)))
+      ;;(print-spsq-group ss1 r p q)
+      (format t "Spectral sequence E^~D_{~D,~D}" r p q)
+      (print (spectral-sequence-group ss1 r p q))
+      (terpri))))
 
-
+(spectral-sequence-differential-matrix ss1 3 3 0)
+(spectral-sequence-differential-matrix ss1 3 3 2)
+(spectral-sequence-differential-matrix ss1 3 3 4)
 
 
 (cat-init)
-(setf ss2 (eilenberg-moore-ss (loop-space (sphere 3))))
-(setf effox (rbcc (efhm (fltrcm ss2))))
+(setf x (loop-space (sphere 3)))
+(setf ss2 (eilenberg-moore-spectral-sequence x))
 
-(spsq-group effOX 1 -2 6)
+(dotimes (n 6)
+  (dotimes (p (1+ n))
+    (let ((q (+ n p)))
+      (print-spsq-group ss2 1 (- p) q))))
 
-(dotimes (n 9)
-    (dotimes (p (1+ n))
-      (let ((q (+ n p)))
-        (spsq-group ss2 1 (- p) q))))
+(spectral-sequence-differential-matrix ss2 1 -2 8)
+(spectral-sequence-differential-of-one-element ss2 1 -2 8 '(1 0 0))
+(spectral-sequence-differential-of-one-element ss2 1 -2 8 '(0 1 0))
+(spectral-sequence-differential-of-one-element ss2 1 -2 8 '(0 0 1))
+
+
+(spectral-sequence-differential-of-one-element ss2 1 -1 6 '(1))
+(spectral-sequence-differential-matrix ss2 1 -1 6)
+(spectral-sequence-differential-matrix ss2 1 -2 6)
+
+
 
 |#
        
+
