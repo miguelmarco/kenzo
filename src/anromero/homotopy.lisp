@@ -119,21 +119,24 @@
     (cond ((equal (car list) 1) (let* ((ch (chml-clss chcm indx))
                                        (fib (z-whitehead chcm ch))
                                        (ft (fibration-total fib)))
+                                  (if (endp (cdr list)) ft
                                   (progn
                                     (kill-epis ft 1 indx)
-                                    (construct-space-iterative ft (cdr list) indx))))
+                                    (construct-space-iterative ft (cdr list) indx)))))
           ((equal (car list) 2) (let* ((ch (chml-clss chcm indx))
                                        (fib (z2-whitehead chcm ch))
                                        (ft (fibration-total fib)))
+                                  (if (endp (cdr list)) ft
                                   (progn
                                     (kill-epis ft 1 indx)
-                                    (construct-space-iterative ft (cdr list) indx))))
+                                    (construct-space-iterative ft (cdr list) indx)))))
           (t (let* ((ch (chml-clss chcm indx))
                     (fib (zp-whitehead (car list) chcm ch))
                     (ft (fibration-total fib)))
+               (if (endp (cdr list)) ft
                (progn
-                                    (kill-epis ft 1 indx)
-               (construct-space-iterative ft (cdr list) indx))))
+                 (kill-epis ft 1 indx)
+                 (construct-space-iterative ft (cdr list) indx)))))
           )))   
 
 
@@ -203,5 +206,6 @@
 
       
     
+
 
 

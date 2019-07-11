@@ -1581,7 +1581,7 @@
             l))))))
 
 
-;; Function that returns the matrix (as a list of lists) of the differential 
+;; Method that returns the matrix (as a list of lists) of the differential 
 ;; d: E^r_{p,q} --> E^r_{p-r,q+r-1}, using the effective homology
 ;; when the complex is not of finite type.
 (DEFMETHOD SPECTRAL-SEQUENCE-DIFFERENTIAL-MATRIX ((ss SPECTRAL-SEQUENCE) r p q)
@@ -1606,28 +1606,65 @@
             l))))))
 
 
-;; Funcion that constructs the Serre spectral sequence associated with a fibration f
+;; Function that constructs the Serre spectral sequence associated with a fibration f
 ;; Returns an object of the class Spectral-sequence
-(DEFUN SERRE-SPECTRAL-SEQUENCE (f)
+(DEFUN SERRE-SPECTRAL-SEQUENCE-FIBRATION (f)
   (declare (type fibration f))
   (let* ((fltrcm (fibration-total f))
          (ecc (rbcc (efhm fltrcm))))
+    (declare (type simplicial-set fltrcm)
+             (type chain-complex ecc))
     (progn
       (change-chcm-to-flcc fltrcm crpr-flin 'crpr-flin)
       (change-chcm-to-flcc ecc tnpr-flin 'tnpr-flin)
-      (build-ss fltrcm   `(Serre-Spectral-Sequence ,f)))))
+      (the spectral-sequence
+        (build-ss fltrcm `(Serre-Spectral-Sequence ,f))))))
+
+;; Function that constructs the Serre spectral sequence associated with a simplicial set
+;; which is given as a (twisted) cartesian product. Returns an object of the class Spectral-sequence
+(DEFUN SERRE-SPECTRAL-SEQUENCE-PRODUCT (x)
+  (declare (type simplicial-set x))
+  (let ((ecc (rbcc (efhm x))))
+    (declare (type chain-complex ecc))
+    (progn
+      (change-chcm-to-flcc x crpr-flin 'crpr-flin)
+      (change-chcm-to-flcc ecc tnpr-flin 'tnpr-flin)
+      (the spectral-sequence
+        (build-ss x   `(Serre-Spectral-Sequence ,x))))))
 
 
-;; Funcion that constructs the Eilenberg-Moore spectral sequence associated with a (1-reduced)
+;; Function that constructs the Serre spectral sequence of the first fibration of the
+;; Whitehead tower of fibrations of a 1-reduced simplicial set
+(DEFUN SERRE-WHITEHEAD-SPECTRAL-SEQUENCE (x)
+  (let* (;; we obtain the first non null homology group
+         (first-non-null (first-non-null-homology-group x 20))
+         (degr (1+ first-non-null))
+         (hom (homology-format x degr))
+         (ft (construct-space-iterative x (split-components hom) degr)))
+    (declare (fixnum first-non-null degr)
+             (type string hom)
+             (type simplicial-set ft))
+    (the spectral-sequence
+      (serre-spectral-sequence-product ft))))
+
+
+;; Function that constructs the Eilenberg-Moore spectral sequence associated with a (1-reduced)
 ;; simplicial set X
 ;; Returns an object of the class Spectral-sequence
 (DEFUN EILENBERG-MOORE-SPECTRAL-SEQUENCE (x)
   (declare (type simplicial-set x))
   (let* ((ox (loop-space x))
          (ecc (rbcc (efhm OX))))
+    (declare 
+     (type simplicial-set ox)
+     (type chain-complex ecc))
     (progn
       (change-chcm-to-flcc ecc cobar-flin 'cobar-flin)
-      (build-ss ecc `(Eilenberg-Moore-Spectral-Sequence ,x)))))
+      (the spectral-sequence
+        (build-ss ecc `(Eilenberg-Moore-Spectral-Sequence ,x))))))
+
+
+
 
 
 #|
@@ -1638,7 +1675,9 @@
   (setf F3 (z-whitehead s3 k3)))
 
 
-(setf ss1 (serre-spectral-sequence f3))
+(setf ss1 (serre-spectral-sequence-fibration f3))
+
+(spectral-sequence-group ss1 2 0 2)
 
 
 (setf r 2)
@@ -1660,10 +1699,10 @@
 (setf x (loop-space (sphere 3)))
 (setf ss2 (eilenberg-moore-spectral-sequence x))
 
-(dotimes (n 6)
-  (dotimes (p (1+ n))
-    (let ((q (+ n p)))
-      (print-spsq-group ss2 1 (- p) q))))
+;;(dotimes (n 6)
+;;  (dotimes (p (1+ n))
+;;    (let ((q (+ n p)))
+;;      (print-spsq-group ss2 1 (- p) q))))
 
 (spectral-sequence-differential-matrix ss2 1 -2 8)
 (spectral-sequence-differential-of-one-element ss2 1 -2 8 '(1 0 0))
@@ -1674,6 +1713,42 @@
 (spectral-sequence-differential-of-one-element ss2 1 -1 6 '(1))
 (spectral-sequence-differential-matrix ss2 1 -1 6)
 (spectral-sequence-differential-matrix ss2 1 -2 6)
+
+
+(cat-init)
+(setf s3 (sphere 3))
+(setf ss3 (serre-whitehead-spectral-sequence s3))
+
+(spectral-sequence-group ss3 2 0 2)
+
+
+(dotimes (n 8)
+  (dotimes (p (1+ n))
+    (let ((q (- n p)))
+      ;;(print-spsq-group ss3 r p q)
+      (format t "Spectral sequence E^~D_{~D,~D}" r p q)
+      (print (spectral-sequence-group ss3 r p q))
+      (terpri))))
+
+
+(spectral-sequence-differential-matrix ss3 3 3 0)
+(spectral-sequence-differential-matrix ss3 3 3 2)
+(spectral-sequence-differential-matrix ss3 3 3 4)
+
+
+
+(cat-init)
+(setf s3 (sphere 3) s2 (sphere 2))
+(setf ss4 (serre-spectral-sequence-product (crts-prdc s3 s2)))
+
+(dotimes (n 8)
+  (dotimes (p (1+ n))
+    (let ((q (- n p)))
+      ;;(print-spsq-group ss1 r p q)
+      (format t "Spectral sequence E^~D_{~D,~D}" r p q)
+      (print (spectral-sequence-group ss4 r p q))
+      (terpri))))
+
 
 
 
