@@ -185,8 +185,8 @@
 (defun terme (mat i j)
   (let ((p (left (chercher-hor (baselig mat i) j))))
     (if (= j (icol p))
-        (val (left p))
-        nil)))
+        (val p)
+        0)))
 
 (defun mat-aleat (n1 n2 dens x)
   (let ((mat (creer-matrice n1 n2))

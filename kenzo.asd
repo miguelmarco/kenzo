@@ -57,7 +57,9 @@
              (:file "cl-space-efhm")
              (:file "whitehead")
              (:file "smith")
-             (:file "sage-interface")             
+             (:file "sage-interface")
+             (:file "finite-topological-spaces-aux")     
+             (:file "finite-topological-spaces-class")          
              (:module "anromero"
              :components
 	     ((:file "resolutions")
