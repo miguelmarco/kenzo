@@ -56,7 +56,7 @@
       (return-from equalmatrix +true+))))
 
 
-(DEFUN MTRX-PRDC (mtrx1 mtrx2)
+(DEFUN MATRICE-PRDC (mtrx1 mtrx2)
   #| Same 'mtrx-prdc' but changing 'line-number' by 'nlig' and 'column-number' by 'ncol' |#
   (declare (type matrice mtrx1 mtrx2))
   (the matrice
