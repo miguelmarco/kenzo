@@ -77,8 +77,9 @@
            (declare (type t-mat pc) (type list rslt))))))
 
 
-(DEFUN SUBMATRIX (mtrx rows cols)
-  #| Extract the submatrix of 'mtrx' formed by the rows whose indexes are in 'rows' and the columns whose indexes are in 'cols' |#
+(DEFUN SUB-MATRIX (mtrx rows cols)
+  #| Extract the submatrix of 'mtrx' formed by the rows whose indexes are in 'rows' the columns whose indexes are in 'cols' |#
+  (declare (type matrice mtrx) (type list rows cols))
   (let ((rslt (creer-matrice (length rows) (length cols))))
     (do ((k 1 (1+ k))
          (columnas cols (cdr columnas)))

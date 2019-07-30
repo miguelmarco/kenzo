@@ -57,6 +57,7 @@
              (:file "cl-space-efhm")
              (:file "whitehead")
              (:file "smith")
+             (:file "vf-order")
              (:file "sage-interface")
              (:file "finite-topological-spaces-aux")     
              (:file "finite-topological-spaces-class")
