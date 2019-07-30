@@ -79,8 +79,6 @@
 
 (DEFUN SUBMATRIX (mtrx rows cols)
   #| Extract the submatrix of 'mtrx' formed by the rows whose indexes are in 'rows' and the columns whose indexes are in 'cols' |#
-  (declare (type matrice mtrx)
-           (type list rows cols))
   (let ((rslt (creer-matrice (length rows) (length cols))))
     (do ((k 1 (1+ k))
          (columnas cols (cdr columnas)))
@@ -230,18 +228,18 @@
   `(stongmat (randomtop ,dim ,dens)))
 
 
-(DEFUN ALTUR (stong lst) 
+(DEFUN HEIGHTS-AUX (stong lst)
   (if (null lst)
       NIL
     (let ((minimals (loop for n in lst
                           if (null (loop for i from 0 to (1- (position n lst))
                                          thereis (eq (terme stong (nth i lst) n) 1)))
                           collect n)))
-      (cons minimals (altur stong (reverse (set-difference lst minimals)))))))
+      (cons minimals (heights-aux stong (set-difference lst minimals)))))) ; 'set-difference' must be in ascending order
 
 (DEFMETHOD HEIGHTS ((stong matrice))
   #| List of elements separated by heights |#
-  (altur stong (<a-b> 1 (ncol stong))))
+  (heights-aux stong (<a-b> 1 (ncol stong))))
 
 
 (DEFCLASS FINITE-SPACE ()
@@ -334,7 +332,6 @@
 
 
 (DEFMETHOD ADMISSIBLE-P ((topogenous matrice)) 
-  
   (the boolean
        (let ((fin T)
              (stong (stongmat topogenous)))
@@ -346,7 +343,6 @@
 
 
 (DEFMETHOD ADMISSIBLE-P ((finspace finite-space))
-
   (the boolean
        (let ((fin T))
          (do ((j 2 (1+ j))) ((or (null fin) (> j (ncol (top finspace)))) fin)

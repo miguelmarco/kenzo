@@ -97,6 +97,27 @@
         rslt))))
 
 
+(DEFUN MATRICE-TO-LMTRX (mtrx)
+  (let* ((column-n (ncol mtrx))
+        (rslt (make-array column-n)))
+    (dotimes (j column-n)
+      (let ((rsltj '())
+            (columnj-pair-list 
+             (let ((ptc (basecol mtrx (1+ j)))
+                   (res '()))
+               (do ((pc (up ptc) (up pc)))
+                   ((eq pc ptc))
+                 (push (list (ilig pc) (val pc)) res))
+               res)))
+        
+        (mapcar #'(lambda (pair)
+                    (push  (list (1- (first pair)) (second pair)) rsltj))
+                columnj-pair-list)
+        
+        (setf (svref rslt j) (nreverse rsltj) )))
+    rslt))
+
+
 (DEFUN SAFE-* (arg1 arg2)
   #| This is in 'NewSmith' |#
   (declare (type fixnum arg1 arg2))

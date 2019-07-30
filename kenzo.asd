@@ -59,7 +59,8 @@
              (:file "smith")
              (:file "sage-interface")
              (:file "finite-topological-spaces-aux")     
-             (:file "finite-topological-spaces-class")          
+             (:file "finite-topological-spaces-class")
+             (:file "finite-topological-spaces-core")          
              (:module "anromero"
              :components
 	     ((:file "resolutions")
