@@ -61,7 +61,8 @@
              (:file "sage-interface")
              (:file "finite-topological-spaces-aux")     
              (:file "finite-topological-spaces-class")
-             (:file "finite-topological-spaces-core")          
+             (:file "finite-topological-spaces-core")
+             (:file "finite-topological-spaces-homology")         
              (:module "anromero"
              :components
 	     ((:file "resolutions")

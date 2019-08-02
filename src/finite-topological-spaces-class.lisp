@@ -31,35 +31,6 @@
     rslt))
 
 
-(DEFUN CONVERTMATRICE (matrice)
-  #| Convert a 'matrice' to an 'array' |#
-  (let* ((numfil (nlig matrice))
-         (numcol (ncol matrice))
-         (rslt (make-array (list numfil numcol) :initial-element 0)))
-    (dotimes (i numfil)
-      (dotimes (j numcol)
-        (let ((Mij (terme matrice (1+ i) (1+ j))))
-          (unless (zerop Mij)
-            (setf (aref rslt i j) Mij)))))
-    rslt))
-
-
-(DEFUN VER (matrix)
-  (let ((mat '()))
-    (typecase matrix
-      (matrice (setf mat matrix))
-      (T (setf mat (convertarray matrix))))
-    (format t "~%")
-    (format t "           ========== MATRIX ~A row(s) + ~A column(s) ==========~%~%" (nlig mat) (ncol mat))
-    (do ((i 1 (1+ i))) ((> i (nlig mat)))
-      (format t "           ")
-      (do ((j 1 (1+ j))) ((> j (ncol mat)))
-        (if (< (terme mat i j) 0)
-            (format t " ~A " (terme mat i j))
-          (format t "  ~A " (terme mat i j))))
-      (format t "  ~%"))))
-
-
 (DEFUN EXTRACT-COLUMN2 (mtrx icol list)
   #| Modification of 'EXTRACT-COLUMN' in order to extract only the elements in the column 'icol' whose row indexes are in the list 'list' |#
   (declare (type matrice mtrx) (type fixnum icol) (type list list))
@@ -402,6 +373,110 @@
   #| Discrete vector field on a matrice 'topogenous' |#
   (dvfield (make-instance 'finite-space
                           :top topogenous)))
+
+
+;;
+;;  Barycentric subdivision
+;;
+
+
+(DEFUN RELAC (topogenous)
+  #| Chains of length 2 |#
+  (declare (type matrice topogenous))
+  (let* ((dim (nlig topogenous))
+         (rslt (creer-matrice dim dim)))
+    (declare (type fixnum dim))   
+    (do ((i 1 (1+ i))) ((> i dim) rslt)
+      (do ((j (1+ i) (1+ j))) ((> j dim))
+        (if (eq (terme topogenous i j) 1)
+            (insert-term rslt i j (list (list i j))))))))
+
+
+(DEFUN BOUNDARYOPERATORS (topogenous)
+  (let* ((relac (relac topogenous))
+         (diferenciales NIL)
+         (nuevo relac)
+         (dim (nlig topogenous))
+         (parada 0)
+         (dim_n 0)
+         (Cn NIL))
+
+    (do ((i 1 (1+ i))) ((> i (1- dim)))
+      (do ((j (1+ i) (1+ j))) ((> j dim))
+        (unless (eq (terme topogenous i j) 0)
+          (setf Cn (append Cn (list (list i j)))))))
+
+    (setf dim_n (length Cn))
+    
+    (push (let ((D1 (creer-matrice dim dim_n)))
+            (dotimes (i dim)
+              (dotimes (j dim_n)
+                (if (find (1+ i) (nth j Cn))
+                    (insert-term D1 (1+ i)  (1+ j) 1))))
+            D1) diferenciales)
+            
+    (if (> dim 1)
+        (do ((long 2 (1+ long))) ((or (> long dim) (eq parada 1)))
+          (let ((dim_n-1 dim_n)
+                (Cn-1 Cn)
+                (anterior nuevo))
+            
+            (setf dim_n 0 Cn NIL nuevo (creer-matrice dim dim))
+            
+            (do ((i 1 (1+ i))) ((> i (- (1+ dim) long)))
+              (do ((j (1+ i) (1+ j))) ((> j dim))
+                (let ((cadenasij NIL))
+                  (do ((r i (1+ r))) ((> r j))
+                    (let ((termeir (terme anterior i r)))
+                      (unless (or (eq termeir 0) (eq (terme relac r j) 0))
+                        (setf cadenasij (append cadenasij (mapcar #'(lambda (x) (append x (list j))) termeir))))))
+                  (if cadenasij
+                      (progn (insert-term nuevo i j cadenasij)
+                        (setf Cn (append Cn cadenasij)))))))
+            
+            (setf dim_n (length Cn))
+            
+            (if (eq dim_n 0)
+                (setf parada 1)
+              (push (let ((Dn (creer-matrice dim_n-1 dim_n)))
+                      (dotimes (i dim_n-1)
+                        (dotimes (j dim_n)
+                          (if (subsetp (nth i Cn-1) (nth j Cn))
+                              (insert-term Dn (1+ i) (1+ j) 1))))
+                      Dn) diferenciales)))))
+    (return-from BOUNDARYOPERATORS (reverse diferenciales))))
+
+
+(DEFUN BLOCKS (list)
+  (let ((rslt (identite (let ((suma (nlig (car list))))
+                          (dolist (x list)
+                            (setf suma (+ suma (ncol x))))
+                          suma))))
+    (do* ((lst list (cdr lst)) 
+          (kfilas 0 (if (null lst) 0 (+ kfilas (nlig dif))))
+          (kcolumnas (nlig (car list)) (if (null lst) 0 (+ kcolumnas (ncol dif))))
+          (dif (car lst) (car lst))) ((endp lst))
+      
+      (do ((i 1 (1+ i))) ((> i (nlig dif)))
+        (do ((j 1 (1+ j))) ((> j (ncol dif)))
+          (unless (eq (terme dif i j) 0)
+            (insert-term rslt (+ i kfilas) (+ j kcolumnas) 1)))))
+      rslt))
+
+
+(DEFMETHOD BAR_SUBDIVISION ((topogenous matrice))
+  #| Topogenous matrice of the barycentric subdivision of 'topogenous' |#
+  (topmat (blocks (boundaryoperators topogenous))))
+
+
+(DEFMETHOD BAR_SUBDIVISION ((finspace finite-space))
+  #| Finite-Space whose 'top' is the barycentric subdivision of (top 'finspace') |#
+  (let ((already (find `(BARYCENTRIC-SUBDIVISION ,finspace) *finite-space-list* :test #'equal :key #'orgn)))
+    (declare (type (or finite-space null) already))
+    (if already
+        already
+      (build-finite-space :orgn `(BARYCENTRIC-SUBDIVISION ,finspace)
+                          :stong (blocks (boundaryoperators (top finspace)))))))
 
 
 ;;

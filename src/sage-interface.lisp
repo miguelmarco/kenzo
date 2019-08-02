@@ -102,7 +102,7 @@
 #| Convert a matrix of type matrice to an array |#
   (let* ((numfil (nlig matrice))
          (numcol (ncol matrice))
-         (rslt (make-array (list numfil numcol) :initial-element 0)))
+         (rslt (make-array (list numfil numcol) :element-type 'fixnum :initial-element 0)))
     (dotimes (i numfil)
       (dotimes (j numcol)
         (let ((Mij (entry matrice (1+ i) (1+ j))))
