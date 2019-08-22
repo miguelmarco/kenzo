@@ -59,10 +59,7 @@
              (:file "smith")
              (:file "vf-order")
              (:file "sage-interface")
-             (:file "finite-topological-spaces-aux")     
-             (:file "finite-topological-spaces-class")
-             (:file "finite-topological-spaces-core")
-             (:file "finite-topological-spaces-homology")         
+             (:file "finite-topological-spaces")         
              (:module "anromero"
              :components
 	     ((:file "resolutions")
