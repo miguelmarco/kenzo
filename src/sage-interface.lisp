@@ -158,6 +158,10 @@
     (make-array (list nrows ncols) :initial-contents list))
 
 
+(DEFUN DFFR-AUX(kchcm)
+  (dffr kchcm))
+
+
 (DEFUN BASIS_AUX1 (kchcm dim)
     (basis kchcm dim))
 
@@ -224,4 +228,41 @@
       (push dimk rslt)))
     (reverse rslt)))
 
+
+;;;;; Morphisms between Chain Complexes ;;;;;
+
+
+(DEFUN BUILD-MRPH-AUX (sorc trgt degr intr strt orgn)
+ (build-mrph :sorc sorc
+             :trgt trgt
+             :degr degr
+             :intr intr
+             :strt strt
+             :orgn orgn))
+
+
+(DEFUN SORC-AUX (mrph)
+  (sorc mrph))
+
+
+(DEFUN TRGT-AUX (mrph)
+  (trgt mrph))
+
+
+(DEFUN DEGR-AUX (mrph)
+  (degr mrph))
+
+
+(DEFUN CHANGE-SORC-TRGT-AUX (mrph source target)
+   (change-sorc-trgt mrph :new-sorc source :new-trgt target))
+
+
+(DEFUN DSTR-CHANGE-SORC-TRGT-AUX (mrph source target)
+   (dstr-change-sorc-trgt mrph :new-sorc source :new-trgt target))
+
+
+(DEFUN EVALUATION-AUX1 (kchcm dim cmbn_list)
+    (let ((comb (cmbn dim)))
+        (setf (cmbn-list comb) cmbn_list)
+        (? kchcm comb)))
 
