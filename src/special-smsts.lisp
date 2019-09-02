@@ -236,7 +236,7 @@
                  :bndr-strt :gnrt
                  :orgn `(build-finite-ss ,list))))
       (setf (symbol-value ind-smst) rslt)
-      (inspect rslt)
+      ;;(inspect rslt)
       (unless (check-smst rslt 0 (length table))
         (pop *smst-list*)
         (pop *chcm-list*)

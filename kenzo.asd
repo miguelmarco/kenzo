@@ -17,8 +17,7 @@
   ((:file "package")
    (:module "src"
             :components
-            (
-	     (:file "kenzo")
+            ((:file "kenzo")
              (:file "abbreviations")
              (:file "macros")
              (:file "various")
@@ -57,17 +56,26 @@
              (:file "cl-space-efhm")
              (:file "whitehead")
              (:file "smith")
-             (:file "vf-order")
              (:file "sage-interface")
-             (:file "finite-topological-spaces")         
+
              (:module "anromero"
              :components
-	     ((:file "resolutions")
-	     (:file "cylinders")
-             (:file "fundamental-classes")
-             (:file "homotopy")	     
-             (:file "bicomplexes")
+             ((:file "bicomplexes")
              (:file "filtered-complexes")
              (:file "spectral-sequences")
-	     (:file "persistent-homology")             
-            ))))))
+             (:file "resolutions")
+             (:file "cylinders")
+             (:file "fundamental-classes")
+             (:file "homotopy")))
+
+             (:module "pushout"
+             :components
+             ((:file "AiBjC-rdct")
+             (:file "cones2")
+             (:file "direct-sum")
+             (:file "remove-covers")
+             (:file "suspension2")
+             (:file "Pushout")))
+
+
+             ))))
