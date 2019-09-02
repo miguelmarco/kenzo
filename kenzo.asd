@@ -56,17 +56,20 @@
              (:file "cl-space-efhm")
              (:file "whitehead")
              (:file "smith")
+             (:file "vf-order")
              (:file "sage-interface")
+             (:file "finite-topological-spaces")
 
              (:module "anromero"
              :components
-             ((:file "bicomplexes")
+             ((:file "resolutions")
+	     (:file "cylinders")
+             (:file "fundamental-classes")
+             (:file "homotopy")	     
+             (:file "bicomplexes")
              (:file "filtered-complexes")
              (:file "spectral-sequences")
-             (:file "resolutions")
-             (:file "cylinders")
-             (:file "fundamental-classes")
-             (:file "homotopy")))
+	     (:file "persistent-homology")))
 
              (:module "pushout"
              :components
@@ -76,6 +79,4 @@
              (:file "remove-covers")
              (:file "suspension2")
              (:file "Pushout")))
-
-
              ))))
