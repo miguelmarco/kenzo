@@ -95,13 +95,12 @@
    (the FILTERED-CHAIN-COMPLEX
       (progn
          (change-class chcm 'FILTERED-CHAIN-COMPLEX)
-        (let* ((orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+        (let* ((orgn (orgn chcm))
                (already (find orgn *flcc-list* :key #'orgn :test #'equal)))
           (declare (type (or null FILTERED-CHAIN-COMPLEX) already))
           (when already
             (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-         (setf (slot-value chcm 'orgn) orgn)
          (push chcm *flcc-list*))
          chcm)))
 
@@ -352,13 +351,12 @@
    (the FILTERED-COALGEBRA
       (progn
          (change-class chcm 'FILTERED-COALGEBRA)
-        (let* ((orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+        (let* ((orgn (orgn chcm))
               (already (find orgn *flclgb-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-COALGEBRA) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-          (setf (slot-value chcm 'orgn) orgn)
           (push chcm *flCLGB-list*)
          chcm))))
 
@@ -424,13 +422,12 @@
          (change-class chcm 'FILTERED-ALGEBRA)
        ;;(setf orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
         (let* (
-              (orgn (append (orgn chcm) (list 'FILTERED-WITH) flin-orgn))
+              (orgn (orgn chcm))
               (already (find orgn *flalgb-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-ALGEBRA) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-          (setf (slot-value chcm 'orgn) orgn)
           (push chcm *flaLGB-list*)
          chcm))))
 
@@ -469,13 +466,12 @@
          (change-class chcm 'FILTERED-hopf-ALGEBRA)
         ;;(setf orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
         (let* (
-               (orgn (append (orgn chcm) (list 'FILTERED-WITH) flin-orgn))
+               (orgn (orgn chcm))
                (already (find orgn *flhopf-list* :key #'orgn :test #'equal)))
           (declare (type (or null FILTERED-HOPF-ALGEBRA) already))
           (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-          (setf (slot-value chcm 'orgn) orgn) 
           (push chcm *flhopf-list*)
          chcm))))
 
@@ -545,13 +541,12 @@
          (change-class chcm 'FILTERED-SIMPLICIAL-SET)
 ;;        (setf orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
         (let* (
-               (orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+               (orgn (orgn chcm))
                (already (find orgn *flsmst-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-SIMPLICIAL-SET) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-         (setf (slot-value chcm 'orgn) orgn)
          (push chcm *flsmst-list*)
          chcm))))
 
@@ -590,13 +585,12 @@
          (change-class chcm 'FILTERED-KAN)
         ;; (setf orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
         (let* (
-               (orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+               (orgn (orgn chcm))
                (already (find orgn *flkan-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-KAN) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-         (setf (slot-value chcm 'orgn) orgn)
          (push chcm *flkan-list*)
          chcm))))
 
@@ -685,13 +679,12 @@
          (change-class chcm 'FILTERED-SIMPLICIAL-GROUP)
         ;; (setf orgn (append (orgn chcm) (list 'FILTERED-WITH) flin-orgn))
         (let* (
-               (orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+               (orgn (orgn chcm))
                (already (find orgn *flsmgr-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-SIMPLICIAL-GROUP) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-         (setf (slot-value chcm 'orgn) orgn)
          (push chcm *flsmgr-list*)
          chcm))))
 
@@ -706,13 +699,12 @@
          (change-class chcm 'AB-FILTERED-SIMPLICIAL-GROUP)
       ;;   (setf orgn (append (orgn chcm) (list 'FILTERED-WITH) flin-orgn))
         (let* (
-               (orgn (append (orgn chcm) (list 'FILTERED-WITH) (list flin-orgn)))
+               (orgn (orgn chcm))
                (already (find orgn *flabsmgr-list* :key #'orgn :test #'equal)))
             (declare (type (or null FILTERED-AB-SIMPLICIAL-GROUP) already))
             (when already
                (return-from change-chcm-to-flcc already))
          (setf (slot-value chcm 'flin) flin)
-        (setf (slot-value chcm 'orgn) orgn) 
         (push chcm *flabsmgr-list*)
          chcm))))
 
