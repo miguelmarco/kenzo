@@ -1455,6 +1455,8 @@
    (orgn :type list :initarg :orgn :reader orgn)))
 
 
+
+
 (DEFVAR *ss-list*
     "The variable *SS-LIST* is bound to a list of user created spectral sequences")
 (SETF *ss-list* +empty-list+)
@@ -1664,6 +1666,19 @@
         (build-ss ecc `(Eilenberg-Moore-Spectral-Sequence ,x))))))
 
 
+;; Function that constructs the spectral sequence associated to the bicomplex
+;; constructed from a list of morphisms of chain complexes
+;; Returns an object of the class Spectral-sequence
+(DEFUN BICOMPLEX-SPECTRAL-SEQUENCE (l)
+  (declare (type list l))
+  (let* ((bic (list-of-mrph-build-bicm l)))
+    (declare 
+     (type chain-complex bic))
+    (progn
+      (change-bicm-to-flcc bic)
+      (the spectral-sequence
+        (build-ss bic `(Bicomplex-Spectral-Sequence ,bic))))))
+
 
 
 
@@ -1703,6 +1718,8 @@
 ;;  (dotimes (p (1+ n))
 ;;    (let ((q (+ n p)))
 ;;      (print-spsq-group ss2 1 (- p) q))))
+
+(print-spsq-group ss2 0 -3 6)
 
 (spectral-sequence-differential-matrix ss2 1 -2 8)
 (spectral-sequence-differential-of-one-element ss2 1 -2 8 '(1 0 0))
@@ -1750,8 +1767,80 @@
       (terpri))))
 
 
+;; Example of bicomplex spectral sequence (same example in file "bicomplexes.lisp")
+
+;; First we build the three chain complexes
+(cat-init)
+(defun chcm1-basis (degr)
+  (if (= degr 1) 
+      (return-from chcm1-basis (list 'a1 'a2))
+    (return-from chcm1-basis nil)))
+
+(defun chcm2-basis (degr)
+  (if (= degr 0) (return-from chcm2-basis (list 'b))
+    (if (= degr 1) (return-from chcm2-basis (list 'c1 'c2))
+      (return-from chcm2-basis nil))))
+
+(defun chcm3-basis (degr)
+  (if (= degr 0) 
+      (return-from chcm3-basis (list 'd1 'd2))
+    (return-from chcm3-basis nil)))
+
+(defun chcm1-intr-dffr (degr gnrt)
+  (return-from chcm1-intr-dffr (cmbn (1- degr))))
+
+(defun chcm2-intr-dffr (degr gnrt)
+  (if (and (= degr 1) (eql gnrt 'c1))
+      (return-from chcm2-intr-dffr (cmbn 0 1 'b))
+    (return-from chcm2-intr-dffr (cmbn (1- degr)))))
+
+(defun chcm3-intr-dffr (degr gnrt)
+  (return-from chcm3-intr-dffr (cmbn (1- degr))))
+
+(setf chcm1 (build-chcm :cmpr #'s-cmpr :basis #'chcm1-basis :intr-dffr #'chcm1-intr-dffr :strt :gnrt :orgn `(chcm1)))
+(setf chcm2 (build-chcm :cmpr #'s-cmpr :basis #'chcm2-basis :intr-dffr #'chcm2-intr-dffr :strt :gnrt :orgn `(chcm2)))
+(setf chcm3 (build-chcm :cmpr #'s-cmpr :basis #'chcm3-basis :intr-dffr #'chcm3-intr-dffr :strt :gnrt :orgn `(chcm3)))          
+
+
+;; Then we build the two morphisms
+
+(defun mrph1-intr (degr gnrt)
+  (if (and (= degr 1) (eql gnrt 'c1))
+      (return-from mrph1-intr (cmbn 1 2 'a1))
+    (if (and (= degr 1) (eql gnrt 'c2))
+        (return-from mrph1-intr (cmbn 1 2 'a2))
+      (return-from mrph1-intr (cmbn degr)))))
+
+(defun mrph2-intr (degr gnrt)
+  (if (and (= degr 0) (eql gnrt 'd1))
+      (return-from mrph2-intr (cmbn 0 2 'b))
+    (return-from mrph2-intr (cmbn degr))))
+
+(setf mrph1 (build-mrph :sorc chcm2 :trgt chcm1 :intr #'mrph1-intr :strt :gnrt :orgn `(mrph1)))
+(setf mrph2 (build-mrph :sorc chcm3 :trgt chcm2 :intr #'mrph2-intr :strt :gnrt :orgn `(mrph2)))
+
+;; Finally we build the list and the associated spectral sequence
+
+(setf l (list mrph1 mrph2))
+(setf bss (bicomplex-spectral-sequence l))
+
+
+
+;; We compute the groups of the associated spectral sequence
+(dotimes (r 5)
+  (dotimes (n 3)
+    (dotimes (p (1+ n))
+      (let ((q (- n p)))
+         (format t "Spectral sequence E^~D_{~D,~D}" r p q)
+        (print (spectral-sequence-group bss r p q))
+        (terpri)
+        ))))
+
+
+(spectral-sequence-differential-matrix bss 1 1 1)
+(spectral-sequence-differential-matrix bss 2 2 0)
+
 
 
 |#
        
-
