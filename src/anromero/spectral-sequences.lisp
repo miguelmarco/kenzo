@@ -396,7 +396,7 @@
 (cat-init)
 (setq kz2 (k-z2-1))
 (setq fcc (bar kz2))
-(Change-Chcm-TO-Flcc fcc abar-flin `(abar-flin))
+(Change-Chcm-TO-Flcc fcc abar-flin)
 (fltr-chcm-z-mtrx fcc 2 3 2)
 (fltr-chcm-z-mtrx fcc 1 2 4)
 |#
@@ -1141,11 +1141,11 @@
 (setq k3 (k-z2 3))
 (Setq hmtp-eq3 (efhm k3))
 (setq ek3 (rbcc hmtp-eq3))
-(change-chcm-to-flcc ek3 :flin abar-flin :orgn `(filtered-chain-complex ,ek3))
+(change-chcm-to-flcc ek3 abar-flin)
 (setf k3-flin
   #'(lambda (degr gnrt)
       (flin ek3 (rf hmtp-eq3 (lg hmtp-eq3 degr gnrt)))))
-(change-chcm-to-flcc k3 :flin k3-flin :orgn `(filtered-chain-complex ,k3))
+(change-chcm-to-flcc k3 k3-flin)
 (hmtp-eq-fltr-order hmtp-eq3 3)
 (hmtp-eq-fltr-order hmtp-eq3 5)
 |#
@@ -1162,7 +1162,7 @@
     (Change-Chcm-TO-Flcc eff-chcm 
                          #'(lambda (degr gnrt)
                              (flin fltrcm (lf hmtp-eq (rg hmtp-eq degr gnrt))))
-                         (orgn eff-chcm))))
+                         )))
 
 
 
@@ -1235,8 +1235,7 @@
          (eff-chcm (rbcc hmtp-eq)))
     (declare
      (type homotopy-equivalence hmtp-eq)
-     (type chain-complex eff-chcm)
-     )
+     (type chain-complex eff-chcm))
     (progn
       (if (not (typep eff-chcm 'filtered-chain-complex))
           (translate-filtration hmtp-eq))
@@ -1617,8 +1616,8 @@
     (declare (type simplicial-set fltrcm)
              (type chain-complex ecc))
     (progn
-      (change-chcm-to-flcc fltrcm crpr-flin 'crpr-flin)
-      (change-chcm-to-flcc ecc tnpr-flin 'tnpr-flin)
+      (change-chcm-to-flcc fltrcm crpr-flin)
+      (change-chcm-to-flcc ecc tnpr-flin)
       (the spectral-sequence
         (build-ss fltrcm `(Serre-Spectral-Sequence ,f))))))
 
@@ -1629,8 +1628,8 @@
   (let ((ecc (rbcc (efhm x))))
     (declare (type chain-complex ecc))
     (progn
-      (change-chcm-to-flcc x crpr-flin 'crpr-flin)
-      (change-chcm-to-flcc ecc tnpr-flin 'tnpr-flin)
+      (change-chcm-to-flcc x crpr-flin)
+      (change-chcm-to-flcc ecc tnpr-flin)
       (the spectral-sequence
         (build-ss x   `(Serre-Spectral-Sequence ,x))))))
 
@@ -1661,7 +1660,7 @@
      (type simplicial-set ox)
      (type chain-complex ecc))
     (progn
-      (change-chcm-to-flcc ecc cobar-flin 'cobar-flin)
+      (change-chcm-to-flcc ecc cobar-flin)
       (the spectral-sequence
         (build-ss ecc `(Eilenberg-Moore-Spectral-Sequence ,x))))))
 

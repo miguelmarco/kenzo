@@ -479,7 +479,7 @@
             rslt)))
 
 
-(setf triangle (change-chcm-to-flcc triangle triangle-flin 'triangle-flin))
+(setf triangle (change-chcm-to-flcc triangle triangle-flin))
 
 
 (dotimes (p 8)
