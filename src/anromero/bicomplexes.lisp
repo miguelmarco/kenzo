@@ -368,7 +368,7 @@
             :basis (BC-BASIS (list-of-mrph-bcbasis l))
             :intr-dffr (BC-INTR-DFFR (list-of-mrph-dffr1 l) (list-of-mrph-dffr2 l))
             :strt :gnrt
-            :orgn `(list-of-mrph-bicomplex from ,l))))
+            :orgn `(BiCmpl from list  ,l))))
       (declare (type chain-complex chcm))
       (slot-makunbound chcm 'bsgn)
       chcm)))

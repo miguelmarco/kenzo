@@ -266,3 +266,39 @@
         (setf (cmbn-list comb) cmbn_list)
         (? kchcm comb)))
 
+
+(DEFUN KINTR (smrph)
+#| Provide the slot :intr of the KenzoMorphismChainComplex obtained by applying the function 'KMorphismChainComplex' to 'schcm' |#
+  (flet ((frslt (dim gnr)
+           (let* ((sep (1+ (position #\G (subseq (write-to-string gnr) 1))))
+                  (dim_gnr (read-from-string (subseq (write-to-string gnr) 1 sep)))
+                  (num_gnr (read-from-string (subseq (write-to-string gnr) (1+ sep)))))
+               (declare (fixnum dim_gnr num_gnr))
+             (unless (equal dim dim_gnr)      ;It's not working
+               (error "WRONG DIMENSION!!!"))
+             (let ((pair (assoc dim smrph))
+                   (rslt (cmbn dim)))
+               (if (null pair)
+                   rslt
+                 (let ((mtrx (cdr pair)))
+                   (unless (< -1 num_gnr (array-dimension mtrx 1))
+                     (error "WRONG GENERATOR!!!"))
+                   (setf (cmbn-list rslt) (loop for i from 0 to (1- (array-dimension mtrx 0))
+                                                unless (eq (aref mtrx i num_gnr) 0)
+                                                collect (term (aref mtrx i num_gnr) (gen dim i))))
+                   rslt))))))
+    #'frslt))
+
+
+(DEFUN KMORPHISMCHAINCOMPLEX_AUX1 (mrph sorc trgt)
+#| Construct a chain complex morphism in Kenzo from the information of the assoc list 'mrph' constructed from a dictionary whose values are matrices |#
+  (build-mrph 
+   :sorc sorc
+   :trgt trgt
+  :strt :GNRT
+  :intr (kintr mrph)
+  :orgn `(KMorphismChainComplex ,sorc ,trgt ,mrph)))
+
+
+
+
