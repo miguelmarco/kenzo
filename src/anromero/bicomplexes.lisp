@@ -373,8 +373,64 @@
       (slot-makunbound chcm 'bsgn)
       chcm)))
 
+
+
 #|
-;; Example of bicomplex from a list of morphisms of two chain complexes
+;; EXAMPLE OF BICOMPLEX
+
+(cat-init)
+
+
+(defun bcbasis (degr1 degr2)
+     (if (and (= degr1 0) (= degr2 1)) (return-from bcbasis '(a1 a2)))
+     (if (and (= degr1 1) (= degr2 0)) (return-from bcbasis '(b)))
+     (if (and (= degr1 1) (= degr2 1)) (return-from bcbasis '(c1 c2)))
+     (if (and (= degr1 2) (= degr2 0))  (return-from bcbasis '(d1 d2)))
+     (return-from bcbasis nil))
+
+(defun dif1 (degr1 degr2 gnrt)
+     (if (and (= degr1 1) (= degr2 1) (eql gnrt 'c1)) (return-from dif1 (list (cons 2 'a1))))
+     (if (and (= degr1 1) (= degr2 1) (eql gnrt 'c2)) (return-from dif1 (list (cons 2 'a2))))
+     (if (and (= degr1 2) (= degr2 0) (eql gnrt 'd1)) (return-from dif1 (list (cons 2 'b))))
+     (return-from dif1 nil))
+
+(defun dif2 (degr1 degr2 gnrt)
+     (if (and (= degr1 1) (= degr2 1) (eql gnrt 'c1)) (return-from dif2 (list (cons 1 'b))))
+     (return-from dif2 nil))
+
+(setf bc (build-bicm :cmpr #'s-cmpr :bcbasis #'bcbasis :dffr1 #'dif1 :dffr2 #'dif2
+          :orgn '(Bicomplex1)))
+
+(basis bc 1)
+
+(change-bicm-to-flcc bc)
+
+
+(do ((r 1 (1+ r)))
+    ((> r 3))
+   (dotimes (n 3)
+      (dotimes (p (+ n 1))
+         (let ((q (- n p)))
+            (spsq-group bc r p q)
+            (terpri)
+            (terpri)
+            ))))
+
+(SPSQ-DFFR-OF-ONE-ELEMENT bc 1 1 1 '(1))
+
+(SPSQ-DFFR-OF-ONE-ELEMENT bc 2 2 0 '(1 0))
+
+(SPSQ-DFFR-OF-ONE-ELEMENT bc 2 2 0 '(0 1))
+
+(spsq-cnvg bc 4)
+
+|#
+
+
+
+
+#|
+;; EXAMPLE OF BICOMPLEX FROM A LIST OF MORPHISMS OF TWO CHAIN COMPLEXES
 
 ;; First we build the three chain complexes
 
