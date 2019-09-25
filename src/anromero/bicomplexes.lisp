@@ -314,10 +314,12 @@
                 (declare (type fixnum degr1 degr2)
                          (type gnrt gnrt))
                 (if (and (> degr1 0) (<= degr1 (length l)))
-                    (let ((mrph (nth (1- degr1) l)))
-                      (cmbn-list (? (sorc mrph) degr2 gnrt)))
+                    (let* ((mrph (nth (1- degr1) l)))
+                      (if (= 0 (mod degr1 2))
+                      (cmbn-list (cmbn-opps (? (sorc mrph) degr2 gnrt)))
+                      (cmbn-list (? (sorc mrph) degr2 gnrt))))
                   (if (= degr1 0)
-                      (cmbn-list (? (trgt (first l)) degr2 gnrt))
+                      (cmbn-list (cmbn-opps (? (trgt (first l)) degr2 gnrt)))
                     nil))))
     (the function #'dffr2)))
 
@@ -366,7 +368,7 @@
            (build-chcm
             :cmpr (list-of-mrph-BC-CMPR l)
             :basis (BC-BASIS (list-of-mrph-bcbasis l))
-            :intr-dffr (BC-INTR-DFFR (list-of-mrph-dffr1 l) (list-of-mrph-dffr2 l))
+            :intr-dffr (bc-intr-dffr (list-of-mrph-dffr1 l) (list-of-mrph-dffr2 l))
             :strt :gnrt
             :orgn `(BiCmpl from list  ,l))))
       (declare (type chain-complex chcm))
@@ -416,11 +418,11 @@
             (terpri)
             ))))
 
-(SPSQ-DFFR-OF-ONE-ELEMENT bc 1 1 1 '(1))
+(spsq-dffr-of-one-element bc 1 1 1 '(1))
 
-(SPSQ-DFFR-OF-ONE-ELEMENT bc 2 2 0 '(1 0))
+(spsq-dffr-of-one-element bc 2 2 0 '(1 0))
 
-(SPSQ-DFFR-OF-ONE-ELEMENT bc 2 2 0 '(0 1))
+(spsq-dffr-of-one-element bc 2 2 0 '(0 1))
 
 (spsq-cnvg bc 4)
 
