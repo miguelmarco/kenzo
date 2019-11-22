@@ -297,7 +297,23 @@
    :trgt trgt
   :strt :GNRT
   :intr (kintr mrph)
-  :orgn `(KMorphismChainComplex ,sorc ,trgt ,mrph)))
+   :orgn `(KMorphismChainComplex ,sorc ,trgt ,mrph)))
+
+#| Informs if a finite topological space is contractible |#
+(DEFUN IS_CONTRACTIBLE_AUX1(finspace list)
+  (find `(CORE ,finspace ,list) *finite-space-list* :test #'equal :key #'orgn))
+
+#| Computes the differential matrix list for a h-regular finite topological space using the discrete vector field |#
+(DEFUN DVF-H-REGULAR-DIF-AUX1 (finspace dvfield)
+  (let ((tar (mapcar #'second dvfield))
+        (sou (mapcar #'first dvfield)))
+    (dvf-h-regular-dif finspace :sou sou :tar tar)))
+
+#| Computes a finite topological space associated with a Stong matrix |#
+(DEFUN TOPOLOGY_FROM_MATRIX_AUX1 (stong)
+  (build-finite-space :stong (convertarray stong)
+                      :orgn `(TOPOLOGY ,(make-array-to-lists stong))))
+
 
 
 
