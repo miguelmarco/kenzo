@@ -373,5 +373,30 @@
   ))
 
 
+;;; Smash product
+
+(defun smash-product (smst1 smst2)
+  (declare (simplicial-set smst1 smst2))
+  (let* ((smst1wsmst2 (wedge smst1 smst2))
+         (smst1xsmst2 (crts-prdc smst1 smst2))
+         (unipunctual (build-finite-ss '(x)))
+         (f (build-smmr :sorc smst1wsmst2 :trgt smst1xsmst2 :degr 0
+                        :sintr #'(lambda (dmns gmsm)
+                                   (declare (fixnum dmns))
+                                   (with-pushout-gsm (ind old) gmsm
+                                     (if (= 1 ind) (absm 0 (crpr 0 old (1- (expt 2 dmns)) (bspn  smst2)))
+                                       (if (= 2 ind) (absm 0 (crpr (1- (expt 2 dmns)) (bspn  smst1) 0 old ))
+                                         (absm (1- (expt 2 dmns)) (bspn smst1xsmst2))))))                                
+                        :orgn `(inclusion ,smst1wsmst2 ,smst1xsmst2)))
+         (g (build-smmr :sorc smst1wsmst2 :trgt unipunctual  :degr 0
+                        :sintr #'(lambda (dmns gmsm)
+                                   (declare (ignore gmsm))
+                                   (absm (1- (expt 2 dmns)) (bspn unipunctual)))
+                        :orgn `(triv ,smst1wsmst2 ,unipunctual))))
+    (declare (type simplicial-set smst1wsmst2 smst1xsmst2 unipunctual)
+             (type simplicial-mrph f g))
+    (pushout f g)))
+
+
 
 
