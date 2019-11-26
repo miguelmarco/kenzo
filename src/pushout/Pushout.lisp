@@ -145,9 +145,9 @@
                             (2 (with-absm (dgop gmsm) (? g (1- dmns) (absm dgop gmsm1))
                                  (absm dgop (pushout-gsm 2 gmsm))))
                             (3 (absm dgop (pushout-gsm 0 crpr)))))))
-                   (1 (with-absm (dgop gmsm) (funcall face2 indx dmns gmsm)
+                   (1 (with-absm (dgop gmsm) (funcall face2 indx dmns old)
                         (absm dgop (pushout-gsm 1 gmsm))))
-                   (2 (with-absm (dgop gmsm) (funcall face3 indx dmns gmsm)
+                   (2 (with-absm (dgop gmsm) (funcall face3 indx dmns old)
                         (absm dgop (pushout-gsm 2 gmsm))))))))
     (the face #'rslt)))
 
