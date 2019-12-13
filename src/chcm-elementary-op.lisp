@@ -237,7 +237,7 @@ composition of two morphisms, where the optional argument is a strategy.
              (error "In 2MRPH-SBTR, ~A and ~A may not be subtracteded."
                     mrph1 mrph2))
            (when (eq (first (orgn mrph1)) 'zero-mrph)
-             (return-from sbtr mrph2))
+             (return-from sbtr (opps mrph2)))
            (when (eq (first (orgn mrph2)) 'zero-mrph)
              (return-from sbtr mrph1))
            (unless strt
