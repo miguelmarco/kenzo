@@ -213,12 +213,7 @@
       
     
 
-(setf smst X degr 4)
-(setf n-hom 4 obj smst degree (first-non-null-homology-group smst degr)  
-  hom (homology-format smst (1+ degree)))
 
-(compute-homotopy-z-xslt n-hom obj (1+ degree))
-(setf degree (1+ degree))
 
 
 
