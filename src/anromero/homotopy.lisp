@@ -59,7 +59,7 @@
         (homology-format (eval ft) n-hom)
       (if (string= "NIL" result) ;; NIL
           (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (compute-homotopy ft n-hom first-non-null))
+            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
         (if (string= "Z " result)
             (compute-homotopy-z-xslt n-hom ft (1+ indx))
           (if (string= "Z/2Z " result)
@@ -78,7 +78,7 @@
         (homology-format (eval ft) n-hom)
       (if (string= "NIL" result) ;; nil
           (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (compute-homotopy ft n-hom first-non-null))
+            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -97,7 +97,7 @@
         (homology-format (eval ft) n-hom)
       (if (string= "NIL" result) ;; nil
           (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (compute-homotopy ft n-hom first-non-null))
+            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -209,9 +209,6 @@
     (if first-non-null
         (split-components (compute-homotopy smst degr first-non-null))
       nil)))
-
-      
-    
 
 
 
