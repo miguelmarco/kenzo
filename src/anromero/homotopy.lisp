@@ -57,11 +57,13 @@
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) nil
-          (if (string= "Z " result)
-              (compute-homotopy-z-xslt n-hom ft (1+ indx))
-            (if (string= "Z/2Z " result)
-                (compute-homotopy-z2-xslt n-hom ft (1+ indx))
+      (if (string= "NIL" result) ;; NIL
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (compute-homotopy ft n-hom first-non-null))
+        (if (string= "Z " result)
+            (compute-homotopy-z-xslt n-hom ft (1+ indx))
+          (if (string= "Z/2Z " result)
+              (compute-homotopy-z2-xslt n-hom ft (1+ indx))
               (if (and (string= (subseq result 0 2) "Z/") (string= (subseq result (search "Z" result :start2 2)) "Z"))
                 (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
               (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
@@ -74,7 +76,9 @@
          (result (homology-format (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) nil
+      (if (string= "NIL" result) ;; nil
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (compute-homotopy ft n-hom first-non-null))
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -91,7 +95,9 @@
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) nil
+      (if (string= "NIL" result) ;; nil
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (compute-homotopy ft n-hom first-non-null))
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -206,6 +212,15 @@
 
       
     
+
+(setf smst X degr 4)
+(setf n-hom 4 obj smst degree (first-non-null-homology-group smst degr)  
+  hom (homology-format smst (1+ degree)))
+
+(compute-homotopy-z-xslt n-hom obj (1+ degree))
+(setf degree (1+ degree))
+
+
 
 
 
