@@ -551,9 +551,10 @@
     (declare
      (list sorc trgt)
      (type cmprf cmpr))
+(when *homology-verbose*
     (format t "~%Computing boundary-matrix in dimension ~D.
 Rank of the source-module : ~D.~2%"
-            n (length sorc))
+            n (length sorc)))
     (let ((sorcl (length sorc))
           (mat (creer-matrice (length trgt) (length sorc)))
           (test #'(lambda (gnrt1 gnrt2)

@@ -21,7 +21,8 @@
       ((>= degr degr2))
     (declare (fixnum degr))
     (chcm-homology (echcm chcm) degr)
-    (terpri) (clock) (terpri)))
+    (when *homology-verbose*
+	(terpri) (clock) (terpri))))
 
 
 (DEFGENERIC SEARCH-EFHM (chcm orgn))

@@ -11,11 +11,14 @@
 
 (provide "homotopy")
 
+(DEFVAR *test-comments* nil)
 
 (DEFUN CHML-CLSS-INTR-NOT-1REDUCED (chcm first)
   (declare
    (type chain-complex chcm)
    (fixnum first))
+  (when *test-comments*
+	(print "Function CHML-CLSS-INTR-NOT-1REDUCED called"))
   (let* ((echcm (echcm chcm))
          (cmpr (cmpr echcm))
          (basis (basis echcm))
@@ -114,6 +117,8 @@
   (declare
    (type chain-complex chcm)
    (fixnum first))
+  (when *test-comments*
+	(print "Function CHML-CLSS-NOT-1REDUCED called"))
   (the morphism
     (build-mrph
      :sorc (echcm chcm) :trgt (z-chcm) :degr (- first)
@@ -124,6 +129,8 @@
 
 (DEFUN CHCM-HOMOLOGY-FORMAT (cc n)
   (declare (type chain-complex cc) (type fixnum n))
+  (when *test-comments*
+	(print "Function CHCM-HOMOLOGY-FORMAT called"))
   (let ((rsl (homologie (chcm-mat cc n) (chcm-mat cc (1+ n))))
         (str nil))
     (declare (type list rsl))
@@ -138,16 +145,21 @@
 
 (DEFUN HOMOLOGY-FORMAT (chcm degr1 &optional (degr2 (1+ degr1)))
   (declare (fixnum degr1 degr2))
+  (when *test-comments*
+	(print "Function HOMOLOGY-FORMAT called"))
   (let ((result_hom nil))
     (do ((degr degr1 (1+ degr)))
         ((>= degr degr2))
       (declare (fixnum degr))
       (setf result_hom (chcm-homology-format (echcm chcm) degr))
-      (terpri) (clock) (terpri))
+      (when *homology-verbose* 
+		(terpri) (clock) (terpri)))
     result_hom))
 
 
 (DEFUN FIRST-NON-NULL-HOMOLOGY-GROUP-AUX (chcm n limit)
+  (when *test-comments*
+	(print "Function FIRST-NON-NULL-HOMOLOGY-GROUP-AUX called"))
   (if (> n limit)
       nil
     (let ((hf (homology-format chcm n)))
@@ -157,10 +169,14 @@
 
 
 (DEFUN FIRST-NON-NULL-HOMOLOGY-GROUP (chcm  limit)
+  (when *test-comments*
+	(print "Function FIRST-NON-NULL-HOMOLOGY-GROUP called"))
   (first-non-null-homology-group-aux chcm 1 limit))
 
 
 (DEFUN COMPUTE-HOMOTOPY-Z-XSLT (n-hom obj indx)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY-Z-XSLT called"))
   (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (z-whitehead (eval obj) (eval ch)))
@@ -181,6 +197,8 @@
 
 
 (DEFUN COMPUTE-HOMOTOPY-Z2-XSLT (n-hom obj indx)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY-Z2-XSLT called"))
   (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (z2-whitehead (eval obj) (eval ch)))
@@ -201,6 +219,8 @@
 
 
 (DEFUN COMPUTE-HOMOTOPY-ZP-XSLT (n-hom obj indx n)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY-ZP-XSLT called"))
   (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (zp-whitehead n (eval obj) (eval ch)))
@@ -221,6 +241,8 @@
 
 
 (DEFUN SPLIT-COMPONENTS (string)
+  (when *test-comments*
+	(print "Function SPLIT-COMPONENTS called"))
   (let ((term (if (string= string "") "" 
                 (if (string= string "NIL") nil
                   (subseq string 0 2)))))
@@ -233,6 +255,8 @@
 
 
 (DEFUN CONSTRUCT-SPACE-ITERATIVE (chcm list indx)
+  (when *test-comments*
+	(print "Function CONSTRUCT-SPACE-ITERATIVE called"))
   (if (endp list)
       chcm
     (cond ((equal (car list) 1) (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
@@ -263,6 +287,8 @@
 
 
 (DEFUN COMPUTE-HOMOTOPY-SEVERAL-XSLT (n-hom obj indx hom)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY-SEVERAL-XSLT called"))
   (let* ((ft (construct-space-iterative obj (split-components hom) indx))
          (result (homology-format ft (1+ indx))))
     (if (= (1+ indx) n-hom)
@@ -278,6 +304,8 @@
 
 
 (DEFUN COMPUTE-HOMOTOPY2-XSLT (n-hom obj degree hom)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY2-XSLT called"))
   (cond
    ((= n-hom 0)
     (format nil "Z")
@@ -297,11 +325,15 @@
 
 
 (DEFUN COMPUTE-HOMOTOPY (smst n-hom degree)
+  (when *test-comments*
+	(print "Function COMPUTE-HOMOTOPY called"))
   (let ((hom (homology-format smst (1+ degree))))
     (compute-homotopy2-xslt n-hom smst degree hom)))
 
 
 (DEFUN HOMOTOPY (smst degr)
+  (when *test-comments*
+	(print "Function HOMOTOPY called"))
   (let (;; we obtain the first non null homology group
         (first-non-null (first-non-null-homology-group smst degr)))
     (if first-non-null
@@ -319,6 +351,8 @@
 
 
 (DEFUN HOMOTOPY-LIST (smst degr)
+  (when *test-comments*
+	(print "Function HOMOTOPY-LIST called"))
   (let (;; we obtain the first non null homology group
         (first-non-null (first-non-null-homology-group smst degr)))
     (if first-non-null
