@@ -265,7 +265,7 @@
                                        (ft (fibration-total fib)))
                                   (if (endp (cdr list)) ft
                                     (progn
-                                      (kill-epi ft 1)
+                                      ;;(kill-epi ft 1)
                                       (construct-space-iterative ft (cdr list) indx)))))
           ((equal (car list) 2) (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
                                              (chml-clss-not-1reduced chcm indx)))
