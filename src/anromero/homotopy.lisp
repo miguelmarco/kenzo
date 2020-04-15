@@ -18,7 +18,7 @@
    (type chain-complex chcm)
    (fixnum first))
   (when *test-comments*
-	(print "Function CHML-CLSS-INTR-NOT-1REDUCED called"))
+    (print "Function CHML-CLSS-INTR-NOT-1REDUCED called"))
   (let* ((echcm (echcm chcm))
          (cmpr (cmpr echcm))
          (basis (basis echcm))
@@ -74,8 +74,7 @@
                                       is null.")))
                 (declare (fixnum indx))
                 (unless (= 1 (aref smith indx indx))
-                  (return indx)))
-              ))
+                  (return indx)))))
         (declare
          (type chain-complex echcm)
          (type cmprf cmpr)
@@ -118,7 +117,7 @@
    (type chain-complex chcm)
    (fixnum first))
   (when *test-comments*
-	(print "Function CHML-CLSS-NOT-1REDUCED called"))
+    (print "Function CHML-CLSS-NOT-1REDUCED called"))
   (the morphism
     (build-mrph
      :sorc (echcm chcm) :trgt (z-chcm) :degr (- first)
@@ -130,7 +129,7 @@
 (DEFUN CHCM-HOMOLOGY-FORMAT (cc n)
   (declare (type chain-complex cc) (type fixnum n))
   (when *test-comments*
-	(print "Function CHCM-HOMOLOGY-FORMAT called"))
+    (print "Function CHCM-HOMOLOGY-FORMAT called"))
   (let ((rsl (homologie (chcm-mat cc n) (chcm-mat cc (1+ n))))
         (str nil))
     (declare (type list rsl))
@@ -146,20 +145,20 @@
 (DEFUN HOMOLOGY-FORMAT (chcm degr1 &optional (degr2 (1+ degr1)))
   (declare (fixnum degr1 degr2))
   (when *test-comments*
-	(print "Function HOMOLOGY-FORMAT called"))
+    (print "Function HOMOLOGY-FORMAT called"))
   (let ((result_hom nil))
     (do ((degr degr1 (1+ degr)))
         ((>= degr degr2))
       (declare (fixnum degr))
       (setf result_hom (chcm-homology-format (echcm chcm) degr))
-      (when *homology-verbose* 
-		(terpri) (clock) (terpri)))
+      (when *homology-verbose*
+        (terpri) (clock) (terpri)))
     result_hom))
 
 
 (DEFUN FIRST-NON-NULL-HOMOLOGY-GROUP-AUX (chcm n limit)
   (when *test-comments*
-	(print "Function FIRST-NON-NULL-HOMOLOGY-GROUP-AUX called"))
+    (print "Function FIRST-NON-NULL-HOMOLOGY-GROUP-AUX called"))
   (if (> n limit)
       nil
     (let ((hf (homology-format chcm n)))
@@ -170,79 +169,92 @@
 
 (DEFUN FIRST-NON-NULL-HOMOLOGY-GROUP (chcm  limit)
   (when *test-comments*
-	(print "Function FIRST-NON-NULL-HOMOLOGY-GROUP called"))
+    (print "Function FIRST-NON-NULL-HOMOLOGY-GROUP called"))
   (first-non-null-homology-group-aux chcm 1 limit))
 
 
 (DEFUN COMPUTE-HOMOTOPY-Z-XSLT (n-hom obj indx)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY-Z-XSLT called"))
-  (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
+    (print "Function COMPUTE-HOMOTOPY-Z-XSLT called"))
+  (let* ((b (= 0 (length (basis (echcm obj) 1))))
+         (ch (if b (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (z-whitehead (eval obj) (eval ch)))
          (ft (fibration-total (eval fib)))
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) ;; NIL
-          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
-        (if (string= "Z " result)
-            (compute-homotopy-z-xslt n-hom ft (1+ indx))
-          (if (string= "Z/2Z " result)
-              (compute-homotopy-z2-xslt n-hom ft (1+ indx))
-            (if (and (string= (subseq result 0 2) "Z/") (string= (subseq result (search "Z" result :start2 2)) "Z"))
-                (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-              (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
+      (progn
+        (if b
+            (kill-epis ft (1- indx) (1+ indx)))
+        (if (string= "NIL" result) ;; NIL
+            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+          (if (string= "Z " result)              
+              (compute-homotopy-z-xslt n-hom ft (1+ indx))
+            (if (string= "Z/2Z " result)
+                
+                (compute-homotopy-z2-xslt n-hom ft (1+ indx))
+              (if (and (string= (subseq result 0 2) "Z/") (string= (subseq result (search "Z" result :start2 2)) "Z"))
+                  (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
+                (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))))
 
 
 (DEFUN COMPUTE-HOMOTOPY-Z2-XSLT (n-hom obj indx)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY-Z2-XSLT called"))
-  (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
+    (print "Function COMPUTE-HOMOTOPY-Z2-XSLT called"))
+  (let* ((b (= 0 (length (basis (echcm obj) 1))))
+         (ch (if b (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (z2-whitehead (eval obj) (eval ch)))
          (ft (fibration-total (eval fib)))
          (result (homology-format (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) ;; nil
-          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
-        (if (string= "Z " result)
-            (compute-homotopy-z-xslt n-hom ft (1+ indx))
-          (if (string= "Z/2Z " result)
-              (compute-homotopy-z2-xslt n-hom ft (1+ indx))
-            (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))
-                (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-              (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
+      (progn
+        (if b
+            (kill-epis ft (1- indx) (1+ indx)))
+        (if (string= "NIL" result) ;; nil
+            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+          (if (string= "Z " result)
+              (compute-homotopy-z-xslt n-hom ft (1+ indx))
+            (if (string= "Z/2Z " result)                
+                (compute-homotopy-z2-xslt n-hom ft (1+ indx))
+              (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))                  
+                  (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
+                (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))))
 
 
 (DEFUN COMPUTE-HOMOTOPY-ZP-XSLT (n-hom obj indx n)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY-ZP-XSLT called"))
-  (let* ((ch (if (= 0 (length (basis (echcm obj) 1))) (chml-clss (eval obj) indx)
+    (print "Function COMPUTE-HOMOTOPY-ZP-XSLT called"))
+  (let* ((b (= 0 (length (basis (echcm obj) 1))))
+         (ch (if b (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (zp-whitehead n (eval obj) (eval ch)))
          (ft (fibration-total (eval fib)))
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (if (string= "NIL" result) ;; nil
-          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-            (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
-        (if (string= "Z " result)
-            (compute-homotopy-z-xslt n-hom ft (1+ indx))
-          (if (string= "Z/2Z " result)
-              (compute-homotopy-z2-xslt n-hom ft (1+ indx))
-            (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))
-                (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
-              (compute-homotopy-several-xslt n-hom ft (1+ indx) result))))))))
+      (progn
+        (if b
+            (kill-epis ft (1- indx) (1+ indx)))
+        (if (string= "NIL" result) ;; nil
+            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+          (if (string= "Z " result)
+              (compute-homotopy-z-xslt n-hom ft (1+ indx))
+            (if (string= "Z/2Z " result)              
+                (compute-homotopy-z2-xslt n-hom ft (1+ indx))
+              (if (and (string= (subseq result 0 2) "Z/")  (string= (subseq result (search "Z" result :start2 2)) "Z"))                  
+                  (compute-homotopy-zp-xslt n-hom ft (1+ indx) (read-from-string (subseq result 2 (search "Z" result :start2 2))))
+                (compute-homotopy-several-xslt n-hom ft (1+ indx) result)))))))))
 
 
 (DEFUN SPLIT-COMPONENTS (string)
   (when *test-comments*
-	(print "Function SPLIT-COMPONENTS called"))
+    (print "Function SPLIT-COMPONENTS called"))
   (let ((term (if (string= string "") "" 
                 (if (string= string "NIL") nil
                   (subseq string 0 2)))))
@@ -256,39 +268,54 @@
 
 (DEFUN CONSTRUCT-SPACE-ITERATIVE (chcm list indx)
   (when *test-comments*
-	(print "Function CONSTRUCT-SPACE-ITERATIVE called"))
+    (print "Function CONSTRUCT-SPACE-ITERATIVE called"))
   (if (endp list)
       chcm
-    (cond ((equal (car list) 1) (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
-                                             (chml-clss-not-1reduced chcm indx)))
-                                       (fib (z-whitehead chcm ch))
-                                       (ft (fibration-total fib)))
-                                  (if (endp (cdr list)) ft
-                                    (progn
-                                      ;;(kill-epi ft 1)
-                                      (construct-space-iterative ft (cdr list) indx)))))
-          ((equal (car list) 2) (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
-                                             (chml-clss-not-1reduced chcm indx)))
-                                       (fib (z2-whitehead chcm ch))
-                                       (ft (fibration-total fib)))
-                                  (if (endp (cdr list)) ft
-                                    (progn
-                                      (kill-epi ft 2)
-                                      (construct-space-iterative ft (cdr list) indx)))))
-          (t (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
-                              (chml-clss-not-1reduced chcm indx)))
-                    (fib (zp-whitehead (car list) chcm ch))
-                    (ft (fibration-total fib)))
-               (if (endp (cdr list)) ft
-                 (progn
-                   (kill-epi ft (cdr list))
-                   (construct-space-iterative ft (cdr list) indx)))))
-          )))   
+    (let ((b (= 0 (length (basis (echcm chcm) 1)))))
+      (cond ((equal (car list) 1) (let* ((ch (if b (chml-clss chcm indx)
+                                               (chml-clss-not-1reduced chcm indx)))
+                                         (fib (z-whitehead chcm ch))
+                                         (ft (fibration-total fib)))
+                                    (if (endp (cdr list)) 
+                                        (progn
+                                          (if b
+                                              (kill-epis ft (1- indx) (1+ indx)))
+                                          ft)
+                                      (progn
+                                        (if b
+                                            (kill-epi ft (1- indx)))
+                                        (construct-space-iterative ft (cdr list) indx)))))
+            ((equal (car list) 2) (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
+                                               (chml-clss-not-1reduced chcm indx)))
+                                         (fib (z2-whitehead chcm ch))
+                                         (ft (fibration-total fib)))
+                                    (if (endp (cdr list)) 
+                                        (progn
+                                          (if b
+                                              (kill-epis ft (1- indx) (1+ indx)))
+                                          ft)
+                                      (progn
+                                        (if b
+                                            (kill-epi ft (1- indx)))
+                                        (construct-space-iterative ft (cdr list) indx)))))
+            (t (let* ((ch (if (= 0 (length (basis (echcm chcm) 1))) (chml-clss chcm indx)
+                            (chml-clss-not-1reduced chcm indx)))
+                      (fib (zp-whitehead (car list) chcm ch))
+                      (ft (fibration-total fib)))
+                 (if (endp (cdr list)) 
+                     (progn
+                       (if b
+                           (kill-epis ft (1- indx) (1+ indx)))
+                       ft)
+                   (progn
+                     (if b
+                         (kill-epi ft (1- indx)))              
+                     (construct-space-iterative ft (cdr list) indx)))))))) ) 
 
 
 (DEFUN COMPUTE-HOMOTOPY-SEVERAL-XSLT (n-hom obj indx hom)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY-SEVERAL-XSLT called"))
+    (print "Function COMPUTE-HOMOTOPY-SEVERAL-XSLT called"))
   (let* ((ft (construct-space-iterative obj (split-components hom) indx))
          (result (homology-format ft (1+ indx))))
     (if (= (1+ indx) n-hom)
@@ -305,11 +332,10 @@
 
 (DEFUN COMPUTE-HOMOTOPY2-XSLT (n-hom obj degree hom)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY2-XSLT called"))
+    (print "Function COMPUTE-HOMOTOPY2-XSLT called"))
   (cond
    ((= n-hom 0)
-    (format nil "Z")
-    )
+    (format nil "Z"))
    ((< n-hom (1+ degree) )
     (format nil ""))
    ((= n-hom (1+ degree))
@@ -326,14 +352,14 @@
 
 (DEFUN COMPUTE-HOMOTOPY (smst n-hom degree)
   (when *test-comments*
-	(print "Function COMPUTE-HOMOTOPY called"))
+    (print "Function COMPUTE-HOMOTOPY called"))
   (let ((hom (homology-format smst (1+ degree))))
     (compute-homotopy2-xslt n-hom smst degree hom)))
 
 
 (DEFUN HOMOTOPY (smst degr)
   (when *test-comments*
-	(print "Function HOMOTOPY called"))
+    (print "Function HOMOTOPY called"))
   (let (;; we obtain the first non null homology group
         (first-non-null (first-non-null-homology-group smst degr)))
     (if first-non-null
@@ -352,7 +378,7 @@
 
 (DEFUN HOMOTOPY-LIST (smst degr)
   (when *test-comments*
-	(print "Function HOMOTOPY-LIST called"))
+    (print "Function HOMOTOPY-LIST called"))
   (let (;; we obtain the first non null homology group
         (first-non-null (first-non-null-homology-group smst degr)))
     (if first-non-null
