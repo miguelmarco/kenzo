@@ -220,13 +220,18 @@
          (ft (fibration-total (eval fib)))
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
-        (homology-format (eval ft) n-hom)
-      (progn
-        (if b
-            (kill-epis ft (1- indx) (1+ indx)))
-        (if (string= "NIL" result) ;; NIL
-            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+        (homology-format (eval ft) n-hom)      
+      (if (string= "NIL" result) ;; NIL
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (if first-non-null 
+                (progn
+                  (if b
+                      (kill-epis ft (1- indx) first-non-null))
+                  (compute-homotopy ft n-hom first-non-null))
+              nil))
+        (progn
+          (if b
+              (kill-epis ft (1- indx) (1+ indx)))
           (if (string= "Z " result)              
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)
@@ -240,7 +245,7 @@
 (DEFUN COMPUTE-HOMOTOPY-Z2-XSLT (n-hom obj indx)
   (when *test-comments*
     (print "Function COMPUTE-HOMOTOPY-Z2-XSLT called"))
-  (let* ((b (= 0 (length (basis (echcm obj) 1))))
+ (let* ((b (= 0 (length (basis (echcm obj) 1))))
          (ch (if b (chml-clss (eval obj) indx)
                (chml-clss-not-1reduced (eval obj) indx)))
          (fib (z2-whitehead (eval obj) (eval ch)))
@@ -248,12 +253,17 @@
          (result (homology-format (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (progn
-        (if b
-            (kill-epis ft (1- indx) (1+ indx)))
-        (if (string= "NIL" result) ;; nil
-            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+      (if (string= "NIL" result) ;; nil
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (if first-non-null 
+                (progn
+                  (if b
+                      (kill-epis ft (1- indx) first-non-null))
+                  (compute-homotopy ft n-hom first-non-null))
+              nil))
+        (progn
+          (if b
+              (kill-epis ft (1- indx) (1+ indx)))
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)                
@@ -274,12 +284,18 @@
          (result (homology-format  (eval ft) (1+ indx))))
     (if (= (1+ indx) n-hom)
         (homology-format (eval ft) n-hom)
-      (progn
-        (if b
-            (kill-epis ft (1- indx) (1+ indx)))
-        (if (string= "NIL" result) ;; nil
-            (let ((first-non-null (first-non-null-homology-group ft n-hom)))
-              (if first-non-null (compute-homotopy ft n-hom first-non-null) nil))
+      (if (string= "NIL" result) ;; nil
+          (let ((first-non-null (first-non-null-homology-group ft n-hom)))
+            (if first-non-null 
+                (progn
+                  (if b
+                      (kill-epis ft (1- indx) first-non-null))
+                  (compute-homotopy ft n-hom first-non-null))
+              nil))
+        (progn
+          (if b
+              (kill-epis ft (1- indx) (1+ indx)))
+          
           (if (string= "Z " result)
               (compute-homotopy-z-xslt n-hom ft (1+ indx))
             (if (string= "Z/2Z " result)              
