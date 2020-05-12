@@ -1643,16 +1643,45 @@
         (build-ss x   `(Serre-Spectral-Sequence ,x))))))
 
 
+;; Function that constructs the first fibration of the
+;; Whitehead tower of fibrations of a 1-reduced simplicial set
+(DEFUN SERRE-WHITEHEAD-FIBRATION (x hom-list degr)
+  (declare
+   (type simplicial-set x)
+   (type list hom-list)
+   (fixnum degr))
+  (if (endp hom-list)
+      x
+    (cond ((equal (car hom-list) 0) (let* ((ch (chml-clss x degr))
+                                           (fib (z-whitehead x ch))
+                                           (ft (fibration-total fib)))
+                                      (serre-whitehead-fibration ft (cdr hom-list) degr)))
+          ((equal (car hom-list) 2) (let* ((ch (chml-clss x degr))
+                                           (fib (z2-whitehead x ch))
+                                           (ft (fibration-total fib)))
+                                      (serre-whitehead-fibration ft (cdr hom-list) degr)))
+          (t (let* ((ch (chml-clss x degr))
+                    (fib (zp-whitehead (car hom-list) x ch))
+                    (ft (fibration-total fib)))
+               (serre-whitehead-fibration ft (cdr hom-list) degr))))))
+
+
 ;; Function that constructs the Serre spectral sequence of the first fibration of the
 ;; Whitehead tower of fibrations of a 1-reduced simplicial set
 (DEFUN SERRE-WHITEHEAD-SPECTRAL-SEQUENCE (x)
   (let* (;; we obtain the first non null homology group
          (first-non-null (first-non-null-homology-group x 20))
-         (degr (1+ first-non-null))
-         (hom (homology-format x degr))
-         (ft (construct-space-iterative x (split-components hom) degr)))
+         (degr (1+ first-non-null))  
+         (cc (echcm x))
+         (hom (homologie (chcm-mat cc degr) (chcm-mat cc (1+ degr))))
+         (l (mapcar #'(lambda (i)
+                        (first i))
+              hom))
+         (hom-list (list-to-reducedsmithlist l))
+         (ft (serre-whitehead-fibration x hom-list degr)))
     (declare (fixnum first-non-null degr)
-             (type string hom)
+             (type chain-complex cc)
+             (type list hom l hom-list)
              (type simplicial-set ft))
     (the spectral-sequence
       (serre-spectral-sequence-product ft))))
