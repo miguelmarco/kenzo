@@ -163,11 +163,21 @@
 
 
 (DEFUN BASIS_AUX1 (kchcm dim)
-    (basis kchcm dim))
+  (basis kchcm dim))
 
 
 (DEFUN ORGN_AUX1 (kchcm)
-    (orgn kchcm))
+  (orgn kchcm))
+  
+
+(DEFUN CMPR-AUX (kchcm)
+  (cmpr kchcm))
+  
+
+(DEFUN CMBN-AUX (degr assoclist)
+  (let ((rslt (cmbn degr)))
+    (setf (cmbn-list rslt) assoclist)
+   rslt))
 
 
 (DEFUN DFFR_AUX1(kchcm dim cmbn_list)
@@ -261,10 +271,10 @@
    (dstr-change-sorc-trgt mrph :new-sorc source :new-trgt target))
 
 
-(DEFUN EVALUATION-AUX1 (kchcm dim cmbn_list)
+(DEFUN EVALUATION-AUX1 (mrph dim cmbn_list)
     (let ((comb (cmbn dim)))
         (setf (cmbn-list comb) cmbn_list)
-        (? kchcm comb)))
+        (? mrph comb)))
 
 
 (DEFUN KINTR (smrph)
