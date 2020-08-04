@@ -353,7 +353,7 @@
 (DEFUN KSINTR (smmrdict)
 #| Provide the slot :sintr of the KenzoSimplicialSetMorphism obtained by applying the function 'KSimplicialSetMorphism' |#
   (flet ((frslt (dim gnr)
-           (funcall (assoc-to-function smmrdict) gnr)))
+           (the absm (funcall (assoc-to-function smmrdict) gnr))))
          #'frslt))
 
 
@@ -375,8 +375,18 @@
     (? smmr cmbn))
 
 
+(DEFUN IDNT-SINTR (smst)
+   (flet ((frslt (dmns gmsm)
+           (absm 0 gmsm)))
+         #'frslt))
 
 
-
-
-
+(DEFUN IDNT-SMMR (smst)
+   (declare (type simplicial-set smst))
+   (the morphism
+      (build-smmr
+         :sorc smst :trgt smst :degr 0
+         :intr #'identity
+         :sintr (idnt-sintr smst)
+         :strt :cmbn
+         :orgn `(idnt-smmr ,smst))))
