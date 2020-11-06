@@ -58,7 +58,6 @@
              (:file "smith")
              (:file "vf-order")
              (:file "sage-interface")
-             (:file "finite-topological-spaces")
 
              (:module "anromero"
              :components
@@ -79,4 +78,15 @@
              (:file "remove-covers")
              (:file "suspension2")
              (:file "Pushout")))
+             
+             (:module "finite-topological-spaces"
+             :components
+             ((:file "finite-spaces-class")
+             (:file "finite-spaces-subdivisions")
+             (:file "finite-spaces-changes")
+             (:file "finite-spaces-homology")
+             (:file "finite-spaces-homology-dvf")
+             (:file "finite-spaces-hregularization")
+             (:file "finite-spaces-facets")
+             (:file "finite-spaces-point-reductions")))
              ))))
