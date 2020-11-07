@@ -121,9 +121,9 @@
 
 
 (DEFUN EDGES-TO-MATRICE (dim edges)
- (let ((slambda (gensym)))
-    (let ((slambda edges))
-      (edges-to-stong dim slambda))))
+  (let ((rslt (creer-matrice dim dim)))
+    (dolist (pair edges rslt)
+      (inserer-terme (baselig rslt (car pair)) (basecol rslt (cadr pair)) 1))))
 
 
 (DEFUN STONG-TO-EDGES (stong)

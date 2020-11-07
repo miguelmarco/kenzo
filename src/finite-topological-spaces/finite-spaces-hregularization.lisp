@@ -385,7 +385,7 @@
                       :orgn `(2H-REGULARIZATION ,finspace)))
 
 
-(DEFUN 2-H-REGULARIZATION (minimal-finspace)
+(DEFMETHOD 2-H-REGULARIZATION ((minimal-finspace finite-space))
   #| Return the 2-h-regularization of the minimal finite space minimal-finspace |#
   (let ((finspace (build-finite-space :orgn `(2-H-REGULARIZATION ,minimal-finspace))))
     (if (>= (idnm finspace) *idnm-counter*)
