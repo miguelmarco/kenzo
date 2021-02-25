@@ -7,6 +7,7 @@
 (PROVIDE "sage-interface")
 
 
+
 ;;;;; Chain complexes ;;;;;
 
 
@@ -76,24 +77,10 @@
 
 
 (DEFUN G-CMPR (GnGm1 GnGm2)
-#| Provide the slot :cmpr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' |#
+#| Provide the slot :cmpr of the KenzoSimplicialSet obtained by applying the function 'KChainComplex' to 'schcm' |#
   (let* ((sep (1+ (position #\G (subseq (write-to-string GnGm1) 1))))
          (m1 (read-from-string (subseq (write-to-string GnGm1) (1+ sep))))
          (m2 (read-from-string (subseq (write-to-string GnGm2) (1+ sep)))))
-    (declare (fixnum m1 m2))
-    (the cmpr
-         (if (< m1 m2)
-             :less
-           (if (= m1 m2)
-               :equal
-             :greater)))))
-
-
-(DEFUN CELL-CMPR (cell_d_m1 cell_d_m2)
-#| Provide the slot :cmpr of the KenzoSimplicialSet obtained by applying the function 'KFiniteSimplicialSet' to 'schcm' |#
-  (let* ((sep (1+ (position #\_ (subseq (write-to-string cell_d_m1) 6))))
-         (m1 (read-from-string (subseq (write-to-string cell_d_m1) (+ 6 sep))))
-         (m2 (read-from-string (subseq (write-to-string cell_d_m2) (+ 6 sep)))))
     (declare (fixnum m1 m2))
     (the cmpr
          (if (< m1 m2)
@@ -171,40 +158,75 @@
     (make-array (list nrows ncols) :initial-contents list))
 
 
-(DEFUN DFFR-AUX (kchcm)
+(DEFUN DFFR-AUX(kchcm)
   (dffr kchcm))
 
 
-(DEFUN BASIS-AUX (kchcm dim)
-  (basis kchcm dim))
+(DEFUN BASIS_AUX1 (kchcm dim)
+    (basis kchcm dim))
 
 
-(DEFUN ORGN-AUX (kchcm)
-  (orgn kchcm))
+(DEFUN ORGN_AUX1 (kchcm)
+    (orgn kchcm))
 
 
-(DEFUN CMPR-AUX (kchcm)
-  (cmpr kchcm))
+(DEFUN DFFR_AUX1(kchcm dim cmbn_list)
+#| Differential of a comb with dimension 'dim' and 'cmbn_list' as its cmbn-list |#
+    (let ((comb (cmbn dim)))
+        (setf (cmbn-list comb) cmbn_list)
+        (dffr kchcm comb)))
 
 
-(DEFUN CMBN-AUX (degr assoclist)
-  (let ((rslt (cmbn degr)))
-    (setf (cmbn-list rslt) assoclist)
-   rslt))
-
-
-(DEFUN DFFR-AUX1(kchcm cmbn)
-#| Differential of a combination 'cmbn' |#
-   (dffr kchcm cmbn))
-
-
-(DEFUN KCHAINCOMPLEX-AUX (chcm str_orgn)
+(DEFUN KCHAINCOMPLEX_AUX1 (chcm str_orgn)
 #| Construct a chain complex in Kenzo from the information of the assoc list 'chcm' constructed from a dictionary whose values are matrices |#
   (build-chcm :cmpr #'G-CMPR
   :strt :GNRT
   :basis (kbasis chcm)
   :intr-dffr (kdffr chcm)
   :orgn `(KChainComplex ,str_orgn)))
+
+
+;;;;; Simplicial Sets ;;;;;
+
+
+(DEFUN KABSTRACTSIMPLEX_AUX1 (degeneracies name)
+  (absm (dgop-ext-int degeneracies) name))
+
+
+(DEFUN BUILD-FINITE-SS2 (list)
+#| The same 'build-finite-ss' function but it does not check the face relations of the simplices in 'list' ('check-smst' omitted) |#
+  (declare (list list))
+  (let ((bspn (first list))
+        (table (finite-ss-table list))
+        (ind-smst (gensym)))
+    (declare
+     (symbol bspn ind-smst)
+     (simple-vector table))
+    ;;  (vector (vector gmsm-faces-info))
+    (let ((rslt (build-smst
+                 :cmpr #'s-cmpr
+                 :basis (finite-ss-basis table)
+                 :bspn bspn
+                 :face (finite-ss-face ind-smst table)
+                 :intr-bndr (finite-ss-intr-bndr ind-smst table)
+                 :bndr-strt :gnrt
+                 :orgn `(build-finite-ss ,list))))
+      (setf (symbol-value ind-smst) rslt)
+      rslt)))
+
+
+(DEFUN SFINITESIMPLICIALSET_AUX1 (finitess limit)
+#| Construct a list (L0 L1 ... Lm), with m <= 'limit', where each list Lk is formed by lists of the form (S (a0 ... ak)), where each aj is a face of the k-simplex S |#
+  (let ((rslt NIL))
+    (do ((k 1 (1+ k))) ((> k limit))
+      (let ((dimk NIL))
+        (dolist (simplex (basis finitess k))
+          (let ((faces NIL))
+            (do ((i k (1- i))) ((< i 0))
+              (push (face finitess i k simplex) faces))
+            (push (cons simplex faces) dimk)))
+      (push dimk rslt)))
+    (reverse rslt)))
 
 
 ;;;;; Morphisms between Chain Complexes ;;;;;
@@ -239,12 +261,14 @@
    (dstr-change-sorc-trgt mrph :new-sorc source :new-trgt target))
 
 
-(DEFUN EVALUATION-AUX (mrph cmbn)
-   (? mrph cmbn))
+(DEFUN EVALUATION-AUX1 (kchcm dim cmbn_list)
+    (let ((comb (cmbn dim)))
+        (setf (cmbn-list comb) cmbn_list)
+        (? kchcm comb)))
 
 
 (DEFUN KINTR (smrph)
-#| Provide the slot :intr of the KenzoChainComplexMorphism obtained by applying the function 'KMorphismChainComplex' to 'smrph' |#
+#| Provide the slot :intr of the KenzoMorphismChainComplex obtained by applying the function 'KMorphismChainComplex' to 'schcm' |#
   (flet ((frslt (dim gnr)
            (let* ((sep (1+ (position #\G (subseq (write-to-string gnr) 1))))
                   (dim_gnr (read-from-string (subseq (write-to-string gnr) 1 sep)))
@@ -266,127 +290,11 @@
     #'frslt))
 
 
-(DEFUN KCHAINCOMPLEXMORPHISM-AUX (mrph sorc trgt)
+(DEFUN KMORPHISMCHAINCOMPLEX_AUX1 (mrph sorc trgt)
 #| Construct a chain complex morphism in Kenzo from the information of the assoc list 'mrph' constructed from a dictionary whose values are matrices |#
   (build-mrph 
    :sorc sorc
    :trgt trgt
    :strt :GNRT
    :intr (kintr mrph)
-   :orgn `(KChainComplexMorphism ,sorc ,trgt ,mrph)))
-
-
-;;;;; Simplicial Sets ;;;;;
-
-(DEFUN ABSM-AUX (dgop gmsm)
-   (absm dgop gmsm))
-
-
-(DEFUN DEGENERATE-P (absm)
-   (degenerate-p absm))
-
-
-(DEFUN NON-DEGENERATE-P (absm)
-   (non-degenerate-p absm))
-
-
-(DEFUN CRPR-ABSMS-AUX (absm1 absm2)
-   (crpr absm1 absm2))
-
-
-(DEFUN ABSM1 (crpr)
-   (absm1 crpr))
-
-
-(DEFUN ABSM2 (crpr)
-   (absm2 crpr))
-
-
-(DEFUN KABSTRACTSIMPLEX-AUX (degeneracies name)
-  (absm (dgop-ext-int degeneracies) name))
-
-
-(DEFUN BUILD-FINITE-SS2 (info)
-#| The same 'build-finite-ss' function but it does not check the face relations of the simplices in 'info' ('check-smst' omitted) |#
-  (declare (list info))
-  (let ((bspn (first info))
-        (table (finite-ss-table info))
-        (ind-smst (gensym)))
-    (declare
-     (symbol bspn ind-smst)
-     (simple-vector table))
-    ;;  (vector (vector gmsm-faces-info))
-    (let ((rslt (build-smst
-                 :cmpr #'s-cmpr ; Good cmpr?
-                 :basis (finite-ss-basis table)
-                 :bspn bspn
-                 :face (finite-ss-face ind-smst table)
-                 :intr-bndr (finite-ss-intr-bndr ind-smst table)
-                 :bndr-strt :gnrt
-                 :orgn `(build-finite-ss ,info))))
-      (setf (symbol-value ind-smst) rslt)
-      rslt)))
-
-
-(DEFUN SFINITESIMPLICIALSET-AUX (finitess limit)
-#| Construct a list (L0 L1 ... Lm), with m <= 'limit', where each list Lk is formed by lists of the form (S (a0 ... ak)), where each aj is a face of the k-simplex S |#
-  (let ((rslt NIL))
-    (do ((k 1 (1+ k))) ((> k limit))
-      (let ((dimk NIL))
-        (dolist (simplex (basis finitess k))
-          (let ((faces NIL))
-            (do ((i k (1- i))) ((< i 0))
-              (push (face finitess i k simplex) faces))
-            (push (cons simplex faces) dimk)))
-      (push dimk rslt)))
-    (reverse rslt)))
-
-
-;;;;; Morphisms between Simplicial Sets ;;;;;
-
-(DEFUN ASSOC-TO-FUNCTION (assoclist)
-    (flet ((frslt (x)
-            (cdr (assoc x assoclist))))
-    #'frslt))
-
-
-(DEFUN KSINTR (smmrdict)
-#| Provide the slot :sintr of the KenzoSimplicialSetMorphism obtained by applying the function 'KSimplicialSetMorphism' |#
-  (flet ((frslt (dim gnr)
-           (the absm (funcall (assoc-to-function smmrdict) gnr))))
-         #'frslt))
-
-
-(DEFUN KSIMPLICIALSETMORPHISM-AUX (smmrdict sorc trgt)
-#| Construct a simplicial set morphism in Kenzo from the information of the assoc list 'smmrdict' constructed from a dictionary whose values are abstract simplexes |#
-  (build-smmr
-   :sorc sorc
-   :trgt trgt
-   :strt :GNRT
-   :sintr (ksintr smmrdict)
-   :orgn `(KSimplicialSetMorphism ,sorc ,trgt ,smmrdict)))
-
-
-(DEFUN EVALUATE-SIMPLEX (smmr dim simplex)
-   (? smmr dim simplex))
-
-
-(DEFUN EVALUATE-CMBN (smmr cmbn)
-    (? smmr cmbn))
-
-
-(DEFUN IDNT-SINTR (smst)
-   (flet ((frslt (dmns gmsm)
-           (absm 0 gmsm)))
-         #'frslt))
-
-
-(DEFUN IDNT-SMMR (smst)
-   (declare (type simplicial-set smst))
-   (the morphism
-      (build-smmr
-         :sorc smst :trgt smst :degr 0
-         :intr #'identity
-         :sintr (idnt-sintr smst)
-         :strt :cmbn
-         :orgn `(idnt-smmr ,smst))))
+   :orgn `(KMorphismChainComplex ,sorc ,trgt ,mrph)))
